@@ -19,7 +19,7 @@ export interface Route {
   handler: Handler;
 }
 
-function get(path: string, handler: Handler) {
+function GET(path: string, handler: Handler) {
   const route = {
     path: new URLPattern({ pathname: path }),
     method: HttpMethod.GET,
@@ -30,7 +30,7 @@ function get(path: string, handler: Handler) {
   return route;
 }
 
-function post(
+function POST(
   path: string,
   handler: Handler,
 ) {
@@ -44,9 +44,45 @@ function post(
   return route;
 }
 
+function PUT(path: string, handler: Handler) {
+  const route: Route = {
+    path: new URLPattern({ pathname: path }),
+    method: HttpMethod.PUT,
+    handler: handler,
+  };
+  Router.add(route);
+  logRegisteredRoute(path, HttpMethod.PUT);
+  return route;
+}
+
+function PATCH(path: string, handler: Handler) {
+  const route: Route = {
+    path: new URLPattern({ pathname: path }),
+    method: HttpMethod.PATCH,
+    handler: handler,
+  };
+  Router.add(route);
+  logRegisteredRoute(path, HttpMethod.PATCH);
+  return route;
+}
+
+function DELETE(path: string, handler: Handler) {
+  const route: Route = {
+    path: new URLPattern({ pathname: path }),
+    method: HttpMethod.PUT,
+    handler: handler,
+  };
+  Router.add(route);
+  logRegisteredRoute(path, HttpMethod.PUT);
+  return route;
+}
+
 export const Route = {
-  get,
-  post,
+  GET,
+  POST,
+  PUT,
+  PATCH,
+  DELETE,
 };
 
 function logRegisteredRoute(route: string, method: HttpMethod) {
