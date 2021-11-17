@@ -1,6 +1,7 @@
 import { Router } from "./router.ts";
 import { log } from "../../shared/logger.ts";
 import { HttpMethod } from "../../shared/http-method.ts";
+import { Middleware } from "../middleware/middleware.ts";
 
 const CONTEXT = "ROUTE";
 
@@ -13,77 +14,87 @@ export interface RequestContext {
   response: Response;
 }
 
-export interface Route {
+export interface RouteParams {
   path: URLPattern;
   method: HttpMethod;
   handler: Handler;
 }
 
-function GET(path: string, handler: Handler) {
-  const route = {
+export class Route {
+  path: URLPattern;
+  method: HttpMethod;
+  handler: Handler;
+  chain: Middleware[] = [];
+
+  constructor({ path, method, handler }: RouteParams) {
+    this.path = path;
+    this.method = method;
+    this.handler = handler;
+  }
+
+  link(middleware: Middleware): Route {
+    this.chain.push(middleware);
+    return this;
+  }
+}
+
+export function Get(path: string, handler: Handler) {
+  const route = new Route({
     path: new URLPattern({ pathname: path }),
     method: HttpMethod.GET,
     handler: handler,
-  };
+  });
   Router.add(route);
   logRegisteredRoute(path, HttpMethod.GET);
   return route;
 }
 
-function POST(
+export function Post(
   path: string,
   handler: Handler,
 ) {
-  const route: Route = {
+  const route = new Route({
     path: new URLPattern({ pathname: path }),
     method: HttpMethod.POST,
     handler: handler,
-  };
+  });
   Router.add(route);
   logRegisteredRoute(path, HttpMethod.POST);
   return route;
 }
 
-function PUT(path: string, handler: Handler) {
-  const route: Route = {
+export function Put(path: string, handler: Handler) {
+  const route = new Route({
     path: new URLPattern({ pathname: path }),
     method: HttpMethod.PUT,
     handler: handler,
-  };
+  });
   Router.add(route);
   logRegisteredRoute(path, HttpMethod.PUT);
   return route;
 }
 
-function PATCH(path: string, handler: Handler) {
-  const route: Route = {
+export function Patch(path: string, handler: Handler) {
+  const route = new Route({
     path: new URLPattern({ pathname: path }),
     method: HttpMethod.PATCH,
     handler: handler,
-  };
+  });
   Router.add(route);
   logRegisteredRoute(path, HttpMethod.PATCH);
   return route;
 }
 
-function DELETE(path: string, handler: Handler) {
-  const route: Route = {
+export function Delete(path: string, handler: Handler) {
+  const route = new Route({
     path: new URLPattern({ pathname: path }),
-    method: HttpMethod.PUT,
+    method: HttpMethod.DELETE,
     handler: handler,
-  };
+  });
   Router.add(route);
-  logRegisteredRoute(path, HttpMethod.PUT);
+  logRegisteredRoute(path, HttpMethod.DELETE);
   return route;
 }
-
-export const Route = {
-  GET,
-  POST,
-  PUT,
-  PATCH,
-  DELETE,
-};
 
 function logRegisteredRoute(route: string, method: HttpMethod) {
   log(

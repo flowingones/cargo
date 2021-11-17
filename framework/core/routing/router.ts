@@ -1,6 +1,7 @@
-import { NotFoundException } from "../exceptions/not-found.ts";
 import { method } from "../request.ts";
 import { RequestContext, Route } from "./route.ts";
+import { NotFoundException } from "../exceptions/not-found-exception.ts";
+import { Middleware, walkthroughAndHandle } from "../middleware/middleware.ts";
 
 const routes: Route[] = [];
 
@@ -26,13 +27,7 @@ function resolve(
 
   ctx.params = route.path.exec(ctx.request.url)?.pathname?.groups;
 
-  const handler = route.handler(ctx);
-  if (handler instanceof Promise) {
-    return handler;
-  }
-  return new Promise((resolve) => {
-    resolve(handler);
-  });
+  return walkthroughAndHandle(ctx, route.chain, route.handler);
 }
 
 export const Router = {
