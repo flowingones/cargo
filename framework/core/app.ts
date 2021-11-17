@@ -1,10 +1,9 @@
 import { Middleware, walkthroughAndHandle } from "./middleware/middleware.ts";
-import { HttpException } from "./exceptions/http-exception.ts";
 import { loadRoutes } from "./routing/file-loader.ts";
 import { CARGO_DEFAULT_PORT } from "./constants.ts";
-import { HttpStatus } from "../shared/mod.ts";
 import { Router } from "./routing/router.ts";
 import { listenAndServe } from "../deps.ts";
+import { handleException } from "./exceptions/handle-exception.ts";
 import { log } from "../shared/logger.ts";
 
 const CONTEXT = "APP";
@@ -44,23 +43,6 @@ function listen(port: number) {
     }
   });
   log(CONTEXT, `Listening on http://localhost:${port}`);
-}
-
-function handleException(exception: unknown): Response {
-  let body: HttpException = {
-    name: "Http Exception",
-    message: "Internal Server Error",
-    status: HttpStatus.INTERAL_ERROR,
-  };
-  if (exception instanceof HttpException) {
-    body = {
-      name: (exception as HttpException).name,
-      message: (exception as HttpException).message,
-      status: (exception as HttpException).status,
-    };
-  }
-  console.error(exception);
-  return new Response(JSON.stringify(body));
 }
 
 const App = {
