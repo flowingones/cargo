@@ -1,13 +1,13 @@
 # Cargo - Deliver data fast, simple and secure!
 
 > This is a first implementation of a framework which supports you in set up
-> APIs. In this very first version it allows you to handle incoming http
-> requests and process them with middleware on app and route level. Please do
-> not use it in production yet!
+> APIs. In the first version it allows you to handle incoming http requests and
+> process them with middleware, on app and route level. Please do not use it in
+> production yet!
 
 ## How to use
 
-Create a `main.ts` file import the call the Cargo bootstrap function and add
+Create a `main.ts` file, import and call Cargos bootstrap function and add
 required routes to the Applications:
 
 ```ts
@@ -24,14 +24,15 @@ App.run();
 ```
 
 Run the application with `deno run --allow-net --allow-read main.ts` and open
-`http://localhost:8000/hello`
+`http://localhost:8000/hello` in your browser.
 
 ## Routing
 
-You can call the route creation function everywhere in your code. However we do
-recommend to add your routes into files in the `routes` directory. All `.ts`
-file in this directory are loaded automatically during Cargos bootstrap process.
-This approach allows you to organise and manage the routes in 1 single place.
+You can call the route creation functions (`Get()`, `Post()` `Put()`, `Patch()`,
+`Delete()`) everywhere in your code. However we do recommend to add your routes
+into files in the `routes` folder. All `.ts` file in this folder are loaded
+automatically during Cargos bootstrap process. This approach allows you to
+organise and manage the routes in 1 single place.
 
 Create a new folder `routes` in your projects root folder and add a new
 `index.ts` file
@@ -78,6 +79,7 @@ const HelloRoute = Get("/hello", (ctx) => {
   return new Response("World!");
 });
 
+// Middleware on route level
 HelloRoute.link((ctx, next) => {
   // Doing work before the request is handled by the route.
   const response = await next(ctx);
