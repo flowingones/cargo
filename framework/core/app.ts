@@ -1,24 +1,23 @@
 import { Middleware, walkthroughAndHandle } from "./middleware/middleware.ts";
 import { loadRoutes } from "./routing/file-loader.ts";
-import { CARGO_DEFAULT_PORT } from "./constants.ts";
+import { CARGO_PORT, CARGO_ROUTES_DIRECTORY } from "./constants.ts";
 import { Router } from "./routing/router.ts";
 import { listenAndServe } from "../deps.ts";
 import { handleException } from "./exceptions/handle-exception.ts";
 import { log } from "../shared/logger.ts";
 
 const CONTEXT = "APP";
-const PORT = CARGO_DEFAULT_PORT;
 
 const chain: Middleware[] = [];
 
 export async function bootstrap() {
-  if (!await loadRoutes()) {
+  if (!await loadRoutes(CARGO_ROUTES_DIRECTORY)) {
     log(CONTEXT, "No routes from the 'routes' directory loaded!");
   }
   return App;
 }
 
-function run(port = PORT): void {
+function run(port = CARGO_PORT): void {
   listen(port);
 }
 
