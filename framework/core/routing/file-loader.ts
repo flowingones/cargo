@@ -6,7 +6,8 @@ export async function loadRoutes(): Promise<boolean> {
     }
     if (file.isFile) {
       try {
-        await import(`${Deno.cwd()}/routes/${file.name}`);
+        console.log(Deno.cwd());
+        await import(`./routes/${file.name}`);
       } catch (e) {
         console.log(e);
       }
