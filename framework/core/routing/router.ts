@@ -9,8 +9,8 @@ function getRoutes() {
   return routes;
 }
 
-function add(route: Route) {
-  routes.push(route);
+function add(toRoute: Route) {
+  routes.push(toRoute);
 }
 
 function resolve(
