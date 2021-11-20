@@ -1,9 +1,6 @@
 import { Router } from "./router.ts";
-import { log } from "../../shared/logger.ts";
 import { HttpMethod } from "../../shared/http-method.ts";
 import { Middleware } from "../middleware/middleware.ts";
-
-const CONTEXT = "ROUTE";
 
 export type Handler = (cxt: RequestContext) => Promise<Response> | Response;
 
@@ -32,7 +29,7 @@ export class Route {
     this.handler = handler;
   }
 
-  link(middleware: Middleware | Middleware[]): Route {
+  middleware(middleware: Middleware | Middleware[]): Route {
     if (middleware instanceof Array) {
       for (const eachMiddleware of middleware) {
         this.chain.push(eachMiddleware);
@@ -51,7 +48,6 @@ export function Get(path: string, handler: Handler) {
     handler: handler,
   });
   Router.add(route);
-  logRegisteredRoute(path, HttpMethod.GET);
   return route;
 }
 
@@ -65,7 +61,6 @@ export function Post(
     handler: handler,
   });
   Router.add(route);
-  logRegisteredRoute(path, HttpMethod.POST);
   return route;
 }
 
@@ -76,7 +71,6 @@ export function Put(path: string, handler: Handler) {
     handler: handler,
   });
   Router.add(route);
-  logRegisteredRoute(path, HttpMethod.PUT);
   return route;
 }
 
@@ -87,7 +81,6 @@ export function Patch(path: string, handler: Handler) {
     handler: handler,
   });
   Router.add(route);
-  logRegisteredRoute(path, HttpMethod.PATCH);
   return route;
 }
 
@@ -98,13 +91,5 @@ export function Delete(path: string, handler: Handler) {
     handler: handler,
   });
   Router.add(route);
-  logRegisteredRoute(path, HttpMethod.DELETE);
   return route;
-}
-
-function logRegisteredRoute(route: string, method: HttpMethod) {
-  log(
-    CONTEXT,
-    `${method} ${route}`,
-  );
 }
