@@ -32,8 +32,14 @@ export class Route {
     this.handler = handler;
   }
 
-  link(middleware: Middleware): Route {
-    this.chain.push(middleware);
+  link(middleware: Middleware | Middleware[]): Route {
+    if (middleware instanceof Array) {
+      for (const eachMiddleware of middleware) {
+        this.chain.push(eachMiddleware);
+      }
+    } else {
+      this.chain.push(middleware);
+    }
     return this;
   }
 }

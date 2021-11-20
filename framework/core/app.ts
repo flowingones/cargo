@@ -21,8 +21,14 @@ function run(port = CARGO_PORT): void {
   listen(port);
 }
 
-function link(middleware: Middleware) {
-  chain.push(middleware);
+function link(middleware: Middleware | Middleware[]) {
+  if (middleware instanceof Array) {
+    for (const eachMiddleware of middleware) {
+      chain.push(eachMiddleware);
+    }
+  } else {
+    chain.push(middleware);
+  }
   return App;
 }
 
