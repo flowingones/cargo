@@ -92,10 +92,6 @@ App.run();
 
 ## Roadmap
 
-### Router
-
-- Allow to organise routes in groups to apply middleware and add a prefix.
-
 ### Middleware
 
 - Implement body-parser middleware with plug-in functionality to add custom
