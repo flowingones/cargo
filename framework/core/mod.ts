@@ -4,4 +4,4 @@ export * from "./app.ts";
 /*
  * Routing
  */
-export * from "./routing/route.ts";
+export * from "./routing/mod.ts";
