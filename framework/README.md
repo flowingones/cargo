@@ -65,7 +65,7 @@ import { bootstrap, Get } from "https://deno.land/x/cargo@0.1.0/core/mod.ts";
 const App = await bootstrap();
 
 // Middleware on app level
-App.link((ctx, next) => {
+App.middleware((ctx, next) => {
   const startTime = Date.now();
   // Calling the next function will continue with the middleware chain and wait for the response.
   const response = await next(ctx);
@@ -80,7 +80,7 @@ const HelloRoute = Get("/hello", (ctx) => {
 });
 
 // Middleware on route level
-HelloRoute.link((ctx, next) => {
+HelloRoute.middleware((ctx, next) => {
   // Doing work before the request is handled by the route.
   const response = await next(ctx);
   // Doing work after the request is handled by the route.
