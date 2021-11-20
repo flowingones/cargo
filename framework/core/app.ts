@@ -18,10 +18,11 @@ export async function bootstrap() {
 }
 
 function run(port = CARGO_PORT): void {
+  logRegisteredRoutes();
   listen(port);
 }
 
-function link(middleware: Middleware | Middleware[]) {
+function middleware(middleware: Middleware | Middleware[]) {
   if (middleware instanceof Array) {
     for (const eachMiddleware of middleware) {
       chain.push(eachMiddleware);
@@ -50,7 +51,13 @@ function listen(port: number) {
   log(CONTEXT, `Listening on http://localhost:${port}`);
 }
 
+function logRegisteredRoutes() {
+  Router.getRoutes().forEach((route) => {
+    log("ROUTE", `${route.method} ${route.path.pathname}`);
+  });
+}
+
 const App = {
   run,
-  link,
+  middleware,
 };
