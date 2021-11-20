@@ -47,15 +47,15 @@ Post("/hello", (ctx) => {
 ```
 
 After reloading the application with the
-`deno run --allow-net --allow-read main.ts` command you will have the post route
-available for making requests.
+`deno run --allow-net --allow-read main.ts` command, you are able to do post
+request to the new route.
 
 ## Middleware
 
 Middleware allows you to do some work before and after the definitive route
 handler is called.
 
-A simple example is to log the time for handling our incoming request. In your
+A simple example is to log the time for handling our incoming request. In the
 `main.ts` add the following middleware:
 
 ```ts
@@ -89,6 +89,12 @@ HelloRoute.link((ctx, next) => {
 
 App.run();
 ```
+
+## Roadmap
+
+### Router
+
+- All to organise Routes in groups to apply middleware and add a prefix.
 
 ## Licence
 
