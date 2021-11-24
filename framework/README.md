@@ -92,10 +92,44 @@ App.run();
 
 ## Roadmap
 
+### Dependency Injection
+
+- Implement simple solution for Dependency Injection. The first implementation
+  will follow a functional approach. Since `Decorators` are still a stage 2
+  proposal and not implemented in Javascript and Typescript, we wait with a
+  decorator based solution.
+- Possibility to inject an instance of a class including its dependencies.
+- Possibility to inject a function including its dependencies.
+- Possibility to add a custom value based on an injection token.
+
 ### Middleware
 
 - Implement body-parser middleware with plug-in functionality to add custom
   parser.
+
+### Authentication
+
+- Implement robust and extensible authentication framework.
+- Implement first authentication strategies (Basic, JWT, OAuth).
+
+### Documentation
+
+- Create basic structure for getting started and fundamentals.
+- Documentation of request context
+- Documentation of recommended projects structure.
+- Documentation of http routing.
+- Documentation of dependency injection.
+- Documentation of authentication framework
+- Documentation of schema validator
+- Use cases and deployment
+
+### Website
+
+- Provide quick overview over the Cargo ecosystem.
+
+### Security
+
+- First audit
 
 ## Licence
 
