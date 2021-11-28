@@ -1,6 +1,6 @@
 # Cargo - Deliver data fast, simple and secure!
 
-> This is a first implementation of a framework which supports you in set up
+> This is a first implementation of a framework which supports you in setting up
 > APIs. In the first version it allows you to handle incoming http requests and
 > process them with middleware, on app and route level. Please do not use it in
 > production yet!
