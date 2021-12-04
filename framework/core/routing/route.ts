@@ -8,7 +8,6 @@ export interface RequestContext {
   params?: unknown;
   body?: unknown;
   request: Request;
-  response: Response;
 }
 
 export interface RouteParams {
@@ -51,10 +50,7 @@ export function Get(path: string, handler: Handler) {
   return route;
 }
 
-export function Post(
-  path: string,
-  handler: Handler,
-) {
+export function Post(path: string, handler: Handler) {
   const route = new Route({
     path: new URLPattern({ pathname: path }),
     method: HttpMethod.POST,

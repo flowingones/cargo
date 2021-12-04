@@ -11,7 +11,7 @@ const CONTEXT = "APP";
 const chain: Middleware[] = [];
 
 export async function bootstrap() {
-  if (!await loadRoutes(CARGO_ROUTES_DIRECTORY)) {
+  if (!(await loadRoutes(CARGO_ROUTES_DIRECTORY))) {
     log(CONTEXT, "No routes from the 'routes' directory loaded!");
   }
   return App;
@@ -39,7 +39,6 @@ function listen(port: number) {
       return await walkthroughAndHandle(
         {
           request: request,
-          response: new Response(),
         },
         chain,
         Router.resolve,
