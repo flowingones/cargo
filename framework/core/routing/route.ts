@@ -8,6 +8,7 @@ export interface RequestContext {
   params?: unknown;
   body?: unknown;
   request: Request;
+  auth?: unknown;
 }
 
 export interface RouteParams {
