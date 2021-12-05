@@ -1,5 +1,5 @@
 import { bootstrap, Get } from "https://deno.land/x/cargo@0.1.4/core/mod.ts";
-import { measure } from "https://deno.land/x/cargo@0.1.4/middleware/mod.ts";
+import { measure } from "https://deno.land/x/cargo/middleware/mod.ts";
 
 interface MessageParams {
   message: string;
