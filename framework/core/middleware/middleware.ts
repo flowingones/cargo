@@ -1,10 +1,9 @@
 import { RequestContext } from "../routing/route.ts";
 import { Handler } from "../routing/route.ts";
 
-export type Middleware = (
-  cxt: RequestContext,
-  next: (ctx: RequestContext) => Promise<Response>,
-) => Promise<Response>;
+export type Next = (ctx: RequestContext) => Promise<Response>;
+
+export type Middleware = (cxt: RequestContext, next: Next) => Promise<Response>;
 
 export function walkthroughAndHandle(
   ctx: RequestContext,
@@ -26,6 +25,6 @@ export function walkthroughAndHandle(
       resolve(handler(ctx));
     });
   }
-  
+
   return next(ctx);
 }
