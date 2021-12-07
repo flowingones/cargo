@@ -1,3 +1,4 @@
+import { log } from "../mod.ts";
 import { RequestContext } from "../http/mod.ts";
 
 export async function timeToResponse(
@@ -10,6 +11,6 @@ export async function timeToResponse(
 
   // Stop time tracking and log the time.
   const stopTime = Date.now();
-  console.log(`Request handled in ${stopTime - startTime} ms`);
+  log("REQUEST", `Request handled in ${stopTime - startTime} ms`);
   return response;
 }
