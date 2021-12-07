@@ -1,21 +1,7 @@
 import { Router } from "./router.ts";
-import { HttpMethod } from "../../shared/http-method.ts";
-import { Middleware } from "../middleware/middleware.ts";
+import { Handler, HttpMethod, RouteParams } from "./mod.ts";
 
-export type Handler = (cxt: RequestContext) => Promise<Response> | Response;
-
-export interface RequestContext {
-  params?: unknown;
-  body?: unknown;
-  request: Request;
-  auth?: unknown;
-}
-
-export interface RouteParams {
-  path: URLPattern;
-  method: HttpMethod;
-  handler: Handler;
-}
+import { Middleware } from "../middleware/mod.ts";
 
 export class Route {
   path: URLPattern;

@@ -1,5 +1,4 @@
-import { RequestContext } from "../routing/route.ts";
-import { Handler } from "../routing/route.ts";
+import { Handler, RequestContext } from "../http/mod.ts";
 
 export type Next = (ctx: RequestContext) => Promise<Response>;
 

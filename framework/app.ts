@@ -1,10 +1,16 @@
-import { Middleware, walkthroughAndHandle } from "./middleware/middleware.ts";
-import { loadRoutes } from "./routing/file-loader.ts";
-import { CARGO_PORT, CARGO_ROUTES_DIRECTORY } from "./constants.ts";
-import { Router } from "./routing/router.ts";
-import { listenAndServe } from "../deps.ts";
+import { listenAndServe } from "./deps.ts";
+import { Router } from "./http/router.ts";
 import { handleException } from "./exceptions/handle-exception.ts";
-import { log } from "../shared/logger.ts";
+import {
+  Middleware,
+  rawBody,
+  searchParams,
+  walkthroughAndHandle,
+} from "./middleware/mod.ts";
+
+import { log } from "./mod.ts";
+
+import { CARGO_PORT, CARGO_ROUTES_DIRECTORY } from "./constants.ts";
 
 const CONTEXT = "APP";
 
@@ -14,6 +20,10 @@ export async function bootstrap() {
   if (!(await loadRoutes(CARGO_ROUTES_DIRECTORY))) {
     log(CONTEXT, "No routes from the 'routes' directory loaded!");
   }
+
+  middleware(rawBody);
+  middleware(searchParams);
+
   return App;
 }
 
@@ -60,3 +70,36 @@ const App = {
   run,
   middleware,
 };
+
+async function loadRoutes(path: string): Promise<boolean> {
+  let routesLoaded = false;
+
+  if (!(await isDirectory(path))) {
+    return routesLoaded;
+  }
+
+  for await (const file of Deno.readDir(path)) {
+    if (!routesLoaded) {
+      routesLoaded = true;
+    }
+    if (file.isFile) {
+      try {
+        await import(`file://${Deno.cwd()}/${path}/${file.name}`);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+  return routesLoaded;
+}
+
+async function isDirectory(path: string): Promise<boolean> {
+  try {
+    if ((await Deno.lstat(path)).isDirectory) {
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}

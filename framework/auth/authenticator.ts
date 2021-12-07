@@ -1,6 +1,6 @@
-import { RequestContext } from "../core/mod.ts";
-import { Middleware, Next } from "../core/middleware/middleware.ts";
-import { UnauthorizedException } from "../core/exceptions/mod.ts";
+import { RequestContext } from "../http/mod.ts";
+import { Middleware, Next } from "../middleware/middleware.ts";
+import { UnauthorizedException } from "../exceptions/mod.ts";
 
 export interface Instructions<T> {
   allow: (entity: T) => void;
@@ -40,11 +40,11 @@ function protectWith<T>(strategyName: string): Middleware {
   throw Error("Strategy not defined!");
 }
 
-function register<T>(strategy: Strategy<T>) {
+function strategy<T>(strategy: Strategy<T>) {
   strategies.push(strategy);
 }
 
 export const Authenticator = {
   protectWith,
-  register,
+  strategy,
 };

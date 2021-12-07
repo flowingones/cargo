@@ -1,5 +1,5 @@
-import { Middleware } from "../middleware/middleware.ts";
-import { Route } from "../routing/route.ts";
+import { Middleware } from "../middleware/mod.ts";
+import { Route } from "./mod.ts";
 
 export class RouteGroup {
   prefix: URLPattern;

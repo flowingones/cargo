@@ -1,6 +1,6 @@
-import { RequestContext } from "../core/mod.ts";
+import { RequestContext } from "../http/mod.ts";
 
-export async function measure(
+export async function timeToResponse(
   ctx: RequestContext,
   next: (ctx: RequestContext) => Promise<Response>,
 ) {

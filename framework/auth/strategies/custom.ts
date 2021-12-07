@@ -1,8 +1,8 @@
 import { Instructions, Strategy } from "../mod.ts";
-import { RequestContext } from "../../core/mod.ts";
+import { RequestContext } from "../../http/mod.ts";
 
 export class CustomStrategy<T> implements Strategy<T> {
-  name = "Custom";
+  name = "custom";
 
   constructor(
     private handler: (

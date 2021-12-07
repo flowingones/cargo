@@ -1,4 +1,4 @@
-import { NAME } from "../core/constants.ts";
+import { NAME } from "./constants.ts";
 
 export function log(context: string, message: string) {
   console.log(

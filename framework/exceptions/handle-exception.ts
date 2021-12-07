@@ -1,5 +1,5 @@
 import { HttpException } from "./http-exception.ts";
-import { HttpStatus } from "../../shared/http-status.ts";
+import { HttpStatus } from "../http/http-status.ts";
 
 export function handleException(exception: unknown): Response {
   let body: HttpException = {
@@ -15,5 +15,5 @@ export function handleException(exception: unknown): Response {
     };
   }
   console.error(exception);
-  return new Response(JSON.stringify(body));
+  return new Response(JSON.stringify(body), { status: body.status });
 }

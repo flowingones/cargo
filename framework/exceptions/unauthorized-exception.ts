@@ -1,4 +1,4 @@
-import { HttpStatus } from "../../shared/http-status.ts";
+import { HttpStatus } from "../http/http-status.ts";
 import { HttpException } from "./http-exception.ts";
 
 export class UnauthorizedException extends HttpException {
