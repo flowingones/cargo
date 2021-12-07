@@ -12,7 +12,8 @@ required routes to the Applications:
 
 ```ts
 // main.ts
-import { bootstrap, Get } from "https://deno.land/x/cargo@0.1.0/core/mod.ts";
+import { bootstrap, Get } from "https://deno.land/x/cargo/mod.ts";
+import { Get } from "https://deno.land/x/cargo/http/mod.ts";
 
 const App = await bootstrap();
 
@@ -39,7 +40,7 @@ Create a new folder `routes` in your projects root folder and add a new
 
 ```ts
 // routes/index.ts
-import { Post } from "https://deno.land/x/cargo@0.1.0/core/mod.ts";
+import { Post } from "https://deno.land/x/cargo/mod.ts";
 
 Post("/hello", (ctx) => {
   return new Response("World!");
@@ -60,7 +61,8 @@ A simple example is to log the time for handling our incoming request. In the
 
 ```ts
 // main.ts
-import { bootstrap, Get } from "https://deno.land/x/cargo@0.1.0/core/mod.ts";
+import { bootstrap } from "https://deno.land/x/cargo/mod.ts";
+import { Get } from "https://deno.land/x/cargo/http/mod.ts";
 
 const App = await bootstrap();
 
