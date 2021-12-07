@@ -40,7 +40,7 @@ Create a new folder `routes` in your projects root folder and add a new
 
 ```ts
 // routes/index.ts
-import { Post } from "https://deno.land/x/cargo/mod.ts";
+import { Post } from "https://deno.land/x/cargo/http/mod.ts";
 
 Post("/hello", (ctx) => {
   return new Response("World!");
