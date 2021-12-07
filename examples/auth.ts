@@ -1,21 +1,24 @@
-import { bootstrap, Get } from "https://deno.land/x/cargo/core/mod.ts";
+import { bootstrap } from "https://deno.land/x/cargo/mod.ts";
+import { Get } from "https://deno.land/x/cargo/http/mod.ts";
 import {
   Authenticator,
-  CustomStrategy,
+  LocalStrategy,
 } from "https://deno.land/x/cargo/auth/mod.ts";
 
 interface AuthenticatedUser {
-  givenName: string;
+  name: string;
 }
 
 /*
  * 1. Add strategy to the Authenticator
  */
-Authenticator.register(
-  new CustomStrategy<AuthenticatedUser>((_ctx, { allow, deny }) => {
-    const givenName = (<{ message: string }> _ctx.params).message;
-    if (givenName === "Daniel") {
-      allow({ givenName: "Daniel" });
+Authenticator.strategy(
+  new LocalStrategy<AuthenticatedUser>((ctx, { allow, deny }) => {
+    const username = ctx.username;
+    const password = ctx.password;
+
+    if (username === "hello" && password === "world") {
+      allow({ name: "John Doe" });
     } else {
       deny("Not authorized");
     }
@@ -31,7 +34,7 @@ Get("/:message", ({ auth }) => {
   /*
    * 3. Protect route with strategy
    */
-  .middleware(Authenticator.protectWith("Custom"));
+  .middleware(Authenticator.protectWith("local"));
 
 /*
  * 4. Bootstrap and Run the Application

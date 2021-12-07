@@ -1,5 +1,6 @@
-import { bootstrap, Get } from "https://deno.land/x/cargo@0.1.4/core/mod.ts";
-import { measure } from "https://deno.land/x/cargo/middleware/mod.ts";
+import { bootstrap } from "https://deno.land/x/cargo/mod.ts";
+import { Get, UrlParams } from "https://deno.land/x/cargo/http/mod.ts";
+import { timeToResponse } from "https://deno.land/x/cargo/middleware/mod.ts";
 
 interface MessageParams {
   message: string;
@@ -17,7 +18,7 @@ Get("/:message", ({ params }) => {
   /*
    * 3. Apply middleware functions (optional)
    */
-  .middleware(measure);
+  .middleware(timeToResponse);
 
 /*
  * 4. Bootstrap and Run the Application
