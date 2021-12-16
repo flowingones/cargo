@@ -1,53 +1,114 @@
-import { assertEquals } from "../deps.ts";
-import { Bool } from "../../framework/validation/mod.ts";
+import { assertArrayIncludes, assertEquals } from "../deps.ts";
+import { BooleanSchema } from "../../framework/validation/mod.ts";
 
-Deno.test("BoolType Valdation: 'null, undefined'", () => {
-  const bool = Bool().required();
-  const expectedWithEmptyTypes = [
-    {
-      message: '"boolean" is required',
-    },
-    {
-      message: '"boolean" is not type "boolean"',
-    },
-  ];
+const requiredMessage = {
+  message: '"boolean" is required',
+};
+const notBooleanMessage = {
+  message: '"boolean" is not type "boolean"',
+};
+const notTrueMessage = {
+  message: '"boolean" is not "true"',
+};
+const notFalseMessage = {
+  message: '"boolean" is not "false"',
+};
 
-  assertEquals(expectedWithEmptyTypes, bool.validate(undefined).errors);
-  assertEquals(expectedWithEmptyTypes, bool.validate(null).errors);
-  assertEquals(
-    [{ message: '"boolean" is not type "boolean"' }],
-    bool.validate("").errors,
-  );
+Deno.test("Boolean Schema Validation: 'isBoolean'", () => {
+  const isBoolean = new BooleanSchema();
+
+  assertEquals(isBoolean.validate(true).errors, []);
+  assertEquals(isBoolean.validate(false).errors, []);
+
+  assertArrayIncludes(isBoolean.validate(undefined).errors, [requiredMessage]);
+  assertArrayIncludes(isBoolean.validate(null).errors, [requiredMessage]);
+
+  assertArrayIncludes(isBoolean.validate("").errors, [notBooleanMessage]);
+
+  assertArrayIncludes(isBoolean.validate({}).errors, [notBooleanMessage]);
+  assertArrayIncludes(isBoolean.validate([]).errors, [notBooleanMessage]);
+  assertArrayIncludes(isBoolean.validate(() => {}).errors, [notBooleanMessage]);
+  assertArrayIncludes(isBoolean.validate(NaN).errors, [notBooleanMessage]);
+
+  assertArrayIncludes(isBoolean.validate(1).errors, [notBooleanMessage]);
+  assertArrayIncludes(isBoolean.validate(0).errors, [notBooleanMessage]);
+  assertArrayIncludes(isBoolean.validate(-1).errors, [notBooleanMessage]);
 });
 
-Deno.test(
-  "BooleanType Valdation: 'object, array, regex, function, numbers'",
-  () => {
-    const isBoolean = Bool();
-    const expectedWithVariousTypes = [
-      {
-        message: '"boolean" is not type "boolean"',
-      },
-    ];
+Deno.test("Boolean Schema Validation: 'required'", () => {
+  const bool = new BooleanSchema().optional().required();
 
-    assertEquals(expectedWithVariousTypes, isBoolean.validate({}).errors);
-    assertEquals(expectedWithVariousTypes, isBoolean.validate([]).errors);
-    assertEquals(expectedWithVariousTypes, isBoolean.validate(/[A-Z]/).errors);
-    assertEquals(expectedWithVariousTypes, isBoolean.validate(() => {}).errors);
+  assertEquals(bool.validate(true).errors, []);
+  assertEquals(bool.validate(false).errors, []);
 
-    assertEquals(expectedWithVariousTypes, isBoolean.validate(-1).errors);
-    assertEquals(expectedWithVariousTypes, isBoolean.validate(0).errors);
-    assertEquals(expectedWithVariousTypes, isBoolean.validate(1).errors);
-  },
-);
+  assertArrayIncludes(bool.validate(undefined).errors, [requiredMessage]);
+  assertArrayIncludes(bool.validate(null).errors, [requiredMessage]);
 
-Deno.test("BoolType Valdation: true, false", () => {
-  const boolTrue = Bool().true();
+  assertArrayIncludes(bool.validate("").errors, [notBooleanMessage]);
+
+  assertArrayIncludes(bool.validate({}).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate([]).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate(() => {}).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate(NaN).errors, [notBooleanMessage]);
+
+  assertArrayIncludes(bool.validate(1).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate(0).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate(-1).errors, [notBooleanMessage]);
+});
+
+Deno.test("Boolean Schema Validation: 'optional'", () => {
+  const bool = new BooleanSchema().optional();
+
+  assertEquals(bool.validate(true).errors, []);
+  assertEquals(bool.validate(false).errors, []);
+
+  assertEquals(bool.validate(undefined).errors, []);
+  assertEquals(bool.validate(null).errors, []);
+
+  assertArrayIncludes(bool.validate("").errors, [notBooleanMessage]);
+
+  assertArrayIncludes(bool.validate({}).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate([]).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate(() => {}).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate(NaN).errors, [notBooleanMessage]);
+
+  assertArrayIncludes(bool.validate(0).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate(1).errors, [notBooleanMessage]);
+  assertArrayIncludes(bool.validate(-1).errors, [notBooleanMessage]);
+});
+
+Deno.test("Boolean Schema Validation: 'true'", () => {
+  const boolTrue = new BooleanSchema().true();
   assertEquals(boolTrue.validate(true).errors, []);
+  assertArrayIncludes(boolTrue.validate(false).errors, [notTrueMessage]);
 
-  const boolFalse = Bool().false();
+  assertArrayIncludes(boolTrue.validate(undefined).errors, [notTrueMessage]);
+  assertArrayIncludes(boolTrue.validate(null).errors, [notTrueMessage]);
+
+  assertArrayIncludes(boolTrue.validate({}).errors, [notTrueMessage]);
+  assertArrayIncludes(boolTrue.validate([]).errors, [notTrueMessage]);
+  assertArrayIncludes(boolTrue.validate(() => {}).errors, [notTrueMessage]);
+  assertArrayIncludes(boolTrue.validate(NaN).errors, [notTrueMessage]);
+
+  assertArrayIncludes(boolTrue.validate(1).errors, [notTrueMessage]);
+  assertArrayIncludes(boolTrue.validate(0).errors, [notTrueMessage]);
+  assertArrayIncludes(boolTrue.validate(-1).errors, [notTrueMessage]);
+});
+
+Deno.test("Boolean Schema Validation: 'false'", () => {
+  const boolFalse = new BooleanSchema().false();
   assertEquals(boolFalse.validate(false).errors, []);
+  assertArrayIncludes(boolFalse.validate(true).errors, [notFalseMessage]);
 
-  const optional = Bool().optional();
-  assertEquals(optional.validate(undefined).errors, []);
+  assertArrayIncludes(boolFalse.validate(undefined).errors, [notFalseMessage]);
+  assertArrayIncludes(boolFalse.validate(null).errors, [notFalseMessage]);
+
+  assertArrayIncludes(boolFalse.validate({}).errors, [notFalseMessage]);
+  assertArrayIncludes(boolFalse.validate([]).errors, [notFalseMessage]);
+  assertArrayIncludes(boolFalse.validate(() => {}).errors, [notFalseMessage]);
+  assertArrayIncludes(boolFalse.validate(NaN).errors, [notFalseMessage]);
+
+  assertArrayIncludes(boolFalse.validate(1).errors, [notFalseMessage]);
+  assertArrayIncludes(boolFalse.validate(0).errors, [notFalseMessage]);
+  assertArrayIncludes(boolFalse.validate(-1).errors, [notFalseMessage]);
 });

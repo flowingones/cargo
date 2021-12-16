@@ -1,152 +1,284 @@
 import { assertArrayIncludes, assertEquals } from "../deps.ts";
-import { String } from "../../framework/validation/mod.ts";
+import { StringSchema } from "../../framework/validation/mod.ts";
 
-const expectedWithEmptyTypes = [
-  {
-    message: '"string" is required',
-  },
-  {
-    message: '"string" is not type "string"',
-  },
-];
+const requiredMessage = {
+  message: '"string" is required',
+};
+const notStringMessage = {
+  message: '"string" is not type "string"',
+};
 
-Deno.test("StringType Valdation: 'undefined, null, \"\"'", () => {
-  const isString = String();
+const notEmptyMessage = {
+  message: '"string" is empty',
+};
 
-  const expectedWithEmptyString: unknown[] = [];
+const emptyMessage = {
+  message: '"string" is not empty',
+};
 
-  assertEquals(isString.validate(undefined).errors, expectedWithEmptyTypes);
-  assertEquals(isString.validate(null).errors, expectedWithEmptyTypes);
-  assertEquals(isString.validate("").errors, expectedWithEmptyString);
+const equalsMessage = {
+  message: '"string" is not equals "Cargo"',
+};
 
-  isString.optional();
+const notEqualsMessage = {
+  message: '"string" is equals "Cargo"',
+};
 
-  assertEquals(isString.validate(undefined).errors, []);
-  assertEquals(isString.validate(null).errors, []);
-  assertEquals(isString.validate("").errors, expectedWithEmptyString);
+const startsWithMessage = {
+  message: `"string" does not start with "Ca"`,
+};
+
+const endsWithMessage = {
+  message: `"string" does not end with "go"`,
+};
+
+Deno.test("String Schema Validation: 'isString'", () => {
+  const isString = new StringSchema();
+
+  assertArrayIncludes(isString.validate(1).errors, [notStringMessage]);
+  assertArrayIncludes(isString.validate(0).errors, [notStringMessage]);
+  assertArrayIncludes(isString.validate(-1).errors, [notStringMessage]);
+
+  assertArrayIncludes(isString.validate(undefined).errors, [requiredMessage]);
+  assertArrayIncludes(isString.validate(null).errors, [requiredMessage]);
+
+  assertEquals(isString.validate("").errors, []);
+  assertEquals(isString.validate("Cargo").errors, []);
+
+  assertArrayIncludes(isString.validate({}).errors, [notStringMessage]);
+  assertArrayIncludes(isString.validate([]).errors, [notStringMessage]);
+  assertArrayIncludes(isString.validate(() => {}).errors, [notStringMessage]);
+
+  assertArrayIncludes(isString.validate(NaN).errors, [notStringMessage]);
+  assertArrayIncludes(isString.validate(Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(isString.validate(-Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(isString.validate(NaN).errors, [notStringMessage]);
+
+  assertArrayIncludes(isString.validate(true).errors, [notStringMessage]);
+  assertArrayIncludes(isString.validate(false).errors, [notStringMessage]);
 });
 
-Deno.test(
-  "StringType Valdation: 'object, array, regex, function, numbers'",
-  () => {
-    const isString = String();
-    const expectedWithVariousTypes = [
-      {
-        message: '"string" is not type "string"',
-      },
-    ];
+Deno.test("String Schema Validation: 'required'", () => {
+  const required = new StringSchema().optional().required();
 
-    assertEquals(isString.validate({}).errors, expectedWithVariousTypes);
-    assertEquals(isString.validate([]).errors, expectedWithVariousTypes);
-    assertEquals(isString.validate(/[A-Z]/).errors, expectedWithVariousTypes);
-    assertEquals(isString.validate(() => {}).errors, expectedWithVariousTypes);
+  assertArrayIncludes(required.validate(1).errors, [notStringMessage]);
+  assertArrayIncludes(required.validate(0).errors, [notStringMessage]);
+  assertArrayIncludes(required.validate(-1).errors, [notStringMessage]);
 
-    assertEquals(isString.validate(-1).errors, expectedWithVariousTypes);
-    assertEquals(isString.validate(0).errors, expectedWithVariousTypes);
-    assertEquals(isString.validate(1).errors, expectedWithVariousTypes);
-  },
-);
+  assertArrayIncludes(required.validate(undefined).errors, [requiredMessage]);
+  assertArrayIncludes(required.validate(null).errors, [requiredMessage]);
 
-Deno.test("StringType Valdation: 'String (Cargo)'", () => {
-  const isString = String();
+  assertEquals(required.validate("").errors, []);
+  assertEquals(required.validate("Cargo").errors, []);
 
-  assertEquals(isString.validate("Hello World!").errors, []);
+  assertArrayIncludes(required.validate({}).errors, [notStringMessage]);
+  assertArrayIncludes(required.validate([]).errors, [notStringMessage]);
+  assertArrayIncludes(required.validate(() => {}).errors, [notStringMessage]);
+
+  assertArrayIncludes(required.validate(NaN).errors, [notStringMessage]);
+  assertArrayIncludes(required.validate(Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(required.validate(-Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(required.validate(NaN).errors, [notStringMessage]);
+
+  assertArrayIncludes(required.validate(true).errors, [notStringMessage]);
+  assertArrayIncludes(required.validate(false).errors, [notStringMessage]);
 });
 
-Deno.test("StringType Valdation: 'Not Empty'", () => {
-  const notEmtpy = String().notEmpty();
+Deno.test("String Schema Validation: 'optional'", () => {
+  const optional = new StringSchema().optional();
 
-  assertEquals(notEmtpy.validate("Cargo").errors, []);
-  assertArrayIncludes(notEmtpy.validate("").errors, [
-    {
-      message: '"string" is empty',
-    },
-  ]);
-  assertArrayIncludes(notEmtpy.validate(undefined).errors, [
-    {
-      message: '"string" is empty',
-    },
-  ]);
-  assertArrayIncludes(notEmtpy.validate(null).errors, [
-    {
-      message: '"string" is empty',
-    },
-  ]);
+  assertArrayIncludes(optional.validate(1).errors, [notStringMessage]);
+  assertArrayIncludes(optional.validate(0).errors, [notStringMessage]);
+  assertArrayIncludes(optional.validate(-1).errors, [notStringMessage]);
+
+  assertEquals(optional.validate(undefined).errors, []);
+  assertEquals(optional.validate(null).errors, []);
+
+  assertEquals(optional.validate("").errors, []);
+  assertEquals(optional.validate("Cargo").errors, []);
+
+  assertArrayIncludes(optional.validate({}).errors, [notStringMessage]);
+  assertArrayIncludes(optional.validate([]).errors, [notStringMessage]);
+  assertArrayIncludes(optional.validate(() => {}).errors, [notStringMessage]);
+
+  assertArrayIncludes(optional.validate(NaN).errors, [notStringMessage]);
+  assertArrayIncludes(optional.validate(Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(optional.validate(-Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(optional.validate(NaN).errors, [notStringMessage]);
+
+  assertArrayIncludes(optional.validate(true).errors, [notStringMessage]);
+  assertArrayIncludes(optional.validate(false).errors, [notStringMessage]);
 });
 
-Deno.test("StringType Valdation: 'Empty'", () => {
-  const notEmtpy = String().empty();
+Deno.test("String Schema Validation: 'notEmpty'", () => {
+  const notEmpty = new StringSchema().notEmpty();
 
-  assertEquals(notEmtpy.validate("").errors, []);
-  assertArrayIncludes(notEmtpy.validate("Cargo").errors, [
-    {
-      message: '"string" is not empty',
-    },
-  ]);
+  assertArrayIncludes(notEmpty.validate(1).errors, [notStringMessage]);
+  assertArrayIncludes(notEmpty.validate(0).errors, [notStringMessage]);
+  assertArrayIncludes(notEmpty.validate(-1).errors, [notStringMessage]);
+
+  assertArrayIncludes(notEmpty.validate(undefined).errors, [notEmptyMessage]);
+  assertArrayIncludes(notEmpty.validate(null).errors, [notEmptyMessage]);
+
+  assertArrayIncludes(notEmpty.validate("").errors, [notEmptyMessage]);
+  assertEquals(notEmpty.validate("Cargo").errors, []);
+
+  assertArrayIncludes(notEmpty.validate({}).errors, [notStringMessage]);
+  assertArrayIncludes(notEmpty.validate([]).errors, [notStringMessage]);
+  assertArrayIncludes(notEmpty.validate(() => {}).errors, [notStringMessage]);
+
+  assertArrayIncludes(notEmpty.validate(NaN).errors, [notStringMessage]);
+  assertArrayIncludes(notEmpty.validate(Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(notEmpty.validate(-Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(notEmpty.validate(NaN).errors, [notStringMessage]);
+
+  assertArrayIncludes(notEmpty.validate(true).errors, [notStringMessage]);
+  assertArrayIncludes(notEmpty.validate(false).errors, [notStringMessage]);
 });
 
-Deno.test("StringType Valdation: 'Equals'", () => {
-  const equals = String().equals("Cargo");
+Deno.test("String Schema Validation: 'empty'", () => {
+  const empty = new StringSchema().empty();
+
+  assertArrayIncludes(empty.validate(1).errors, [notStringMessage]);
+  assertArrayIncludes(empty.validate(0).errors, [notStringMessage]);
+  assertArrayIncludes(empty.validate(-1).errors, [notStringMessage]);
+
+  assertArrayIncludes(empty.validate(undefined).errors, [
+    requiredMessage,
+    notStringMessage,
+  ]);
+  assertArrayIncludes(empty.validate(null).errors, [
+    requiredMessage,
+    notStringMessage,
+  ]);
+
+  assertEquals(empty.validate("").errors, []);
+  assertArrayIncludes(empty.validate("Cargo").errors, [emptyMessage]);
+
+  assertArrayIncludes(empty.validate({}).errors, [notStringMessage]);
+  assertArrayIncludes(empty.validate([]).errors, [notStringMessage]);
+  assertArrayIncludes(empty.validate(() => {}).errors, [notStringMessage]);
+
+  assertArrayIncludes(empty.validate(NaN).errors, [notStringMessage]);
+  assertArrayIncludes(empty.validate(Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(empty.validate(-Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(empty.validate(NaN).errors, [notStringMessage]);
+
+  assertArrayIncludes(empty.validate(true).errors, [notStringMessage]);
+  assertArrayIncludes(empty.validate(false).errors, [notStringMessage]);
+});
+
+Deno.test("String Schema Validation: 'equals'", () => {
+  const equals = new StringSchema().equals("Cargo");
+
+  assertArrayIncludes(equals.validate(1).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate(0).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate(-1).errors, [equalsMessage]);
+
+  assertArrayIncludes(equals.validate(undefined).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate(null).errors, [equalsMessage]);
+
+  assertArrayIncludes(equals.validate("").errors, [equalsMessage]);
   assertEquals(equals.validate("Cargo").errors, []);
-  assertArrayIncludes(equals.validate("Deno").errors, [
-    {
-      message: '"string" is not equals "Cargo"',
-    },
-  ]);
-  assertArrayIncludes(equals.validate(undefined).errors, [
-    {
-      message: '"string" is not equals "Cargo"',
-    },
-  ]);
+
+  assertArrayIncludes(equals.validate({}).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate([]).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate(() => {}).errors, [equalsMessage]);
+
+  assertArrayIncludes(equals.validate(NaN).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate(Infinity).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate(-Infinity).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate(NaN).errors, [equalsMessage]);
+
+  assertArrayIncludes(equals.validate(true).errors, [equalsMessage]);
+  assertArrayIncludes(equals.validate(false).errors, [equalsMessage]);
 });
 
-Deno.test("StringType Valdation: 'Not Equals'", () => {
-  const notEquals = String().notEquals("Cargo");
-  assertEquals(notEquals.validate("Cargo").errors, [
-    {
-      message: '"string" is equals "Cargo"',
-    },
+Deno.test("String Schema Validation: 'notEquals'", () => {
+  const notEquals = new StringSchema().notEquals("Cargo");
+
+  assertArrayIncludes(notEquals.validate(1).errors, [notStringMessage]);
+  assertArrayIncludes(notEquals.validate(0).errors, [notStringMessage]);
+  assertArrayIncludes(notEquals.validate(-1).errors, [notStringMessage]);
+
+  assertArrayIncludes(notEquals.validate(undefined).errors, [
+    requiredMessage,
+    notStringMessage,
   ]);
-  assertArrayIncludes(notEquals.validate("Deno").errors, []);
-  assertArrayIncludes(
-    notEquals.validate(undefined).errors,
-    expectedWithEmptyTypes,
-  );
+  assertArrayIncludes(notEquals.validate(null).errors, [
+    requiredMessage,
+    notStringMessage,
+  ]);
+
+  assertEquals(notEquals.validate("").errors, []);
+  assertArrayIncludes(notEquals.validate("Cargo").errors, [notEqualsMessage]);
+
+  assertArrayIncludes(notEquals.validate({}).errors, [notStringMessage]);
+  assertArrayIncludes(notEquals.validate([]).errors, [notStringMessage]);
+  assertArrayIncludes(notEquals.validate(() => {}).errors, [notStringMessage]);
+
+  assertArrayIncludes(notEquals.validate(NaN).errors, [notStringMessage]);
+  assertArrayIncludes(notEquals.validate(Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(notEquals.validate(-Infinity).errors, [notStringMessage]);
+  assertArrayIncludes(notEquals.validate(NaN).errors, [notStringMessage]);
+
+  assertArrayIncludes(notEquals.validate(true).errors, [notStringMessage]);
+  assertArrayIncludes(notEquals.validate(false).errors, [notStringMessage]);
 });
 
-Deno.test("StringType Valdation: 'Starts With'", () => {
-  const startsWith = String().startsWith("Ca");
+Deno.test("String Schema Validation: 'startsWith'", () => {
+  const startsWith = new StringSchema().startsWith("Ca");
+
+  assertArrayIncludes(startsWith.validate(1).errors, [startsWithMessage]);
+  assertArrayIncludes(startsWith.validate(0).errors, [startsWithMessage]);
+  assertArrayIncludes(startsWith.validate(-1).errors, [startsWithMessage]);
+
+  assertArrayIncludes(startsWith.validate(undefined).errors, [requiredMessage]);
+  assertArrayIncludes(startsWith.validate(null).errors, [requiredMessage]);
+
+  assertArrayIncludes(startsWith.validate("").errors, [startsWithMessage]);
   assertEquals(startsWith.validate("Cargo").errors, []);
-  assertEquals(startsWith.validate(".").errors, [
-    { message: '"string" does not start with "Ca"' },
-  ]);
-  assertArrayIncludes(startsWith.validate("Deno").errors, [
-    { message: '"string" does not start with "Ca"' },
-  ]);
-  assertArrayIncludes(startsWith.validate({ startsWith: true }).errors, [
-    { message: '"string" does not start with "Ca"' },
-  ]);
-  assertArrayIncludes(startsWith.validate(undefined).errors, [
-    { message: '"string" does not start with "Ca"' },
-  ]);
-});
 
-Deno.test("StringType Valdation: 'Ends With'", () => {
-  const endsWith = String().endsWith("go");
-  assertEquals(endsWith.validate("Cargo").errors, []);
-  assertArrayIncludes(endsWith.validate("Deno").errors, [
-    {
-      message: '"string" does not end with "go"',
-    },
+  assertArrayIncludes(startsWith.validate({}).errors, [startsWithMessage]);
+  assertArrayIncludes(startsWith.validate([]).errors, [startsWithMessage]);
+  assertArrayIncludes(startsWith.validate(() => {}).errors, [
+    startsWithMessage,
   ]);
-  assertArrayIncludes(endsWith.validate(".").errors, [
-    {
-      message: '"string" does not end with "go"',
-    },
+
+  assertArrayIncludes(startsWith.validate(NaN).errors, [startsWithMessage]);
+  assertArrayIncludes(startsWith.validate(Infinity).errors, [
+    startsWithMessage,
   ]);
-  assertArrayIncludes(endsWith.validate(undefined).errors, [
-    {
-      message: '"string" does not end with "go"',
-    },
+  assertArrayIncludes(startsWith.validate(-Infinity).errors, [
+    startsWithMessage,
   ]);
+  assertArrayIncludes(startsWith.validate(NaN).errors, [startsWithMessage]);
+
+  assertArrayIncludes(startsWith.validate(true).errors, [startsWithMessage]);
+  assertArrayIncludes(startsWith.validate(false).errors, [startsWithMessage]);
+});
+Deno.test("String Schema Validation: 'endsWith'", () => {
+  const startsWith = new StringSchema().endsWith("go");
+
+  assertArrayIncludes(startsWith.validate(1).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate(0).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate(-1).errors, [endsWithMessage]);
+
+  assertArrayIncludes(startsWith.validate(undefined).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate(null).errors, [endsWithMessage]);
+
+  assertArrayIncludes(startsWith.validate("").errors, [endsWithMessage]);
+  assertEquals(startsWith.validate("Cargo").errors, []);
+
+  assertArrayIncludes(startsWith.validate({}).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate([]).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate(() => {}).errors, [endsWithMessage]);
+
+  assertArrayIncludes(startsWith.validate(NaN).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate(Infinity).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate(-Infinity).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate(NaN).errors, [endsWithMessage]);
+
+  assertArrayIncludes(startsWith.validate(true).errors, [endsWithMessage]);
+  assertArrayIncludes(startsWith.validate(false).errors, [endsWithMessage]);
 });
