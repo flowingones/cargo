@@ -18,11 +18,16 @@ export interface Property {
   isRequired: boolean;
 }
 
-export abstract class BaseType {
+export abstract class BaseSchema {
   property: Property = {
     validators: [],
     isRequired: true,
   };
+
+  protected validator(validator: Validator): this {
+    this.property.validators.push(validator);
+    return this;
+  }
 
   optional(): this {
     this.property.isRequired = false;
@@ -31,17 +36,17 @@ export abstract class BaseType {
 
   abstract required(): this;
 
-  abstract validate(key: string, value: unknown): Validation;
+  abstract validate(value: unknown, key?: string): Validation;
 }
 
-export abstract class PrimitiveType extends BaseType {
+export abstract class PrimitiveSchema extends BaseSchema {
   constructor(type: string) {
     super();
     this.property.validators = [required(type)];
   }
 
   custom(validator: Validator): this {
-    this.property.validators.push(validator);
+    this.validator(validator);
     return this;
   }
 
@@ -50,12 +55,12 @@ export abstract class PrimitiveType extends BaseType {
     return this;
   }
 
-  validate(value: unknown): Validation {
+  validate(value: unknown, key?: string): Validation {
     const errors: ValidationError[] = [];
 
     if (this.property.isRequired || isDefined(value)) {
       for (const validator of this.property.validators) {
-        const result = validator(value);
+        const result = validator(value, key);
         if (result) errors.push(result);
       }
     }
@@ -67,20 +72,20 @@ export abstract class PrimitiveType extends BaseType {
   }
 }
 
-function required(type: string): Validator {
-  return (value: unknown) => {
+export function required(type: string): Validator {
+  return (value: unknown, key?: string) => {
     if (isNotDefined(value)) {
       return {
-        message: `"${type}" is required`,
+        message: `"${key || type}" is required`,
       };
     }
   };
 }
 
-function isNotDefined(value: unknown): boolean {
+export function isNotDefined(value: unknown): boolean {
   return value === undefined || value === null;
 }
 
-function isDefined(value: unknown): boolean {
+export function isDefined(value: unknown): boolean {
   return !isNotDefined(value);
 }

@@ -1,2 +1,2 @@
 export * from "./schema.ts";
-export * from "./types/mod.ts";
+export * from "./schemas/mod.ts";
