@@ -1,4 +1,4 @@
-import { listenAndServe } from "./deps.ts";
+import { serve } from "./deps.ts";
 import { Router } from "./http/router.ts";
 import { handleException } from "./exceptions/handle-exception.ts";
 import {
@@ -7,14 +7,22 @@ import {
   searchParams,
   walkthroughAndHandle,
 } from "./middleware/mod.ts";
-
-import { log } from "./mod.ts";
+import { isDirectory, log } from "./utils/mod.ts";
 
 import { CARGO_PORT, CARGO_ROUTES_DIRECTORY } from "./constants.ts";
 
 const CONTEXT = "APP";
 
 const chain: Middleware[] = [];
+export interface BootstrapOptions {
+  enableParcel: boolean;
+  port: number;
+}
+
+const bootstrapOptions: BootstrapOptions = {
+  enableParcel: true,
+  port: CARGO_PORT,
+};
 
 export async function bootstrap() {
   if (!(await loadRoutes(CARGO_ROUTES_DIRECTORY))) {
@@ -27,7 +35,7 @@ export async function bootstrap() {
   return App;
 }
 
-function run(port = CARGO_PORT): void {
+function run(port = bootstrapOptions.port): void {
   logRegisteredRoutes();
   listen(port);
 }
@@ -44,19 +52,24 @@ function middleware(middleware: Middleware | Middleware[]) {
 }
 
 function listen(port: number) {
-  listenAndServe(`:${port}`, async (request: Request) => {
-    try {
-      return await walkthroughAndHandle(
-        {
-          request: request,
-        },
-        chain,
-        Router.resolve,
-      );
-    } catch (error: unknown) {
-      return handleException(error);
-    }
-  });
+  serve(
+    async (request: Request) => {
+      try {
+        return await walkthroughAndHandle(
+          {
+            request: request,
+          },
+          chain,
+          Router.resolve,
+        );
+      } catch (error: unknown) {
+        return handleException(error);
+      }
+    },
+    {
+      port: port,
+    },
+  );
   log(CONTEXT, `Listening on http://localhost:${port}`);
 }
 
@@ -91,15 +104,4 @@ async function loadRoutes(path: string): Promise<boolean> {
     }
   }
   return routesLoaded;
-}
-
-async function isDirectory(path: string): Promise<boolean> {
-  try {
-    if ((await Deno.lstat(path)).isDirectory) {
-      return true;
-    }
-    return false;
-  } catch {
-    return false;
-  }
 }
