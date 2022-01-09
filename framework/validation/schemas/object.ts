@@ -29,10 +29,10 @@ export class ObjectSchema extends BaseSchema {
         if (result) errors.push(result);
       }
       for (const key in this.schema) {
-        const pushIt = isDefined(toValidate) && typeof toValidate !== "function"
+        const toPush = isDefined(toValidate) && typeof toValidate !== "function"
           ? (<Keyable> toValidate)[key]
           : undefined;
-        errors.push(...this.schema[key].validate(pushIt, key).errors);
+        errors.push(...this.schema[key].validate(toPush, key).errors);
       }
     }
 
