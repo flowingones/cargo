@@ -11,4 +11,6 @@ deliver fast and secure applications, right from the beginning.
 > until version 1 is released. Public APIs need to be fixed and all features
 > need to be tested.
 
+Cargo is developed and tested with Deno in Version 1.17.x.
+
 But you can help, take a test ride and give feedback: <feedback@cargo.wtf>
