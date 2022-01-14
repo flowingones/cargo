@@ -1,4 +1,4 @@
-import { assertArrayIncludes, assertEquals } from "./deps.ts";
+import { assertArrayIncludes, assertEquals } from "./deps_tests.ts";
 import { NumberSchema } from "../mod.ts";
 
 const requiredMessage = {
