@@ -1,4 +1,4 @@
-import { log } from "../mod.ts";
+import { log } from "../utils/mod.ts";
 import { RequestContext } from "../http/mod.ts";
 
 export async function timeToResponse(
