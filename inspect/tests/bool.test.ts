@@ -1,5 +1,5 @@
-import { assertArrayIncludes, assertEquals } from "../deps.ts";
-import { BooleanSchema } from "../../framework/validation/mod.ts";
+import { assertArrayIncludes, assertEquals } from "./deps.ts";
+import { BooleanSchema } from "../mod.ts";
 
 const requiredMessage = {
   message: '"boolean" is required',

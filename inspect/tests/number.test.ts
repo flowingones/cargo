@@ -1,5 +1,5 @@
-import { assertArrayIncludes, assertEquals } from "../deps.ts";
-import { NumberSchema } from "../../framework/validation/mod.ts";
+import { assertArrayIncludes, assertEquals } from "./deps.ts";
+import { NumberSchema } from "../mod.ts";
 
 const requiredMessage = {
   message: '"number" is required',

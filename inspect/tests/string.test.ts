@@ -1,5 +1,5 @@
-import { assertArrayIncludes, assertEquals } from "../deps.ts";
-import { StringSchema } from "../../framework/validation/mod.ts";
+import { assertArrayIncludes, assertEquals } from "./deps.ts";
+import { StringSchema } from "../mod.ts";
 
 const requiredMessage = {
   message: '"string" is required',
