@@ -1,5 +1,5 @@
 import { serve } from "./deps.ts";
-import { Router } from "./http/router.ts";
+import { assetsFromDir, Router } from "./http/mod.ts";
 import { handleException } from "./exceptions/handle-exception.ts";
 import {
   Middleware,
@@ -28,6 +28,8 @@ export async function bootstrap() {
   if (!(await loadRoutes(CARGO_ROUTES_DIRECTORY))) {
     log(CONTEXT, "No routes from the 'routes' directory loaded!");
   }
+
+  await assetsFromDir();
 
   middleware(rawBody);
   middleware(searchParams);
