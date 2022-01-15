@@ -1,7 +1,5 @@
-import { extname } from "../deps.ts";
-
 import { Get } from "./mod.ts";
-import { log, mimeTypeByExtension } from "../utils/mod.ts";
+import { getFileExtension, log, mimeTypeByExtension } from "../utils/mod.ts";
 
 export async function assetsFromDir(
   directoryPath = "assets",
@@ -30,7 +28,7 @@ function registerAssets(pathToFile: string) {
     return new Response(file, {
       headers: {
         "content-type":
-          mimeTypeByExtension(extname(pathToFile).replace(".", ""))?.type ||
+          mimeTypeByExtension(getFileExtension(pathToFile))?.type ||
           "text/plain",
       },
     });
