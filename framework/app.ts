@@ -15,12 +15,10 @@ const CONTEXT = "APP";
 
 const chain: Middleware[] = [];
 export interface BootstrapOptions {
-  enableParcel: boolean;
   port: number;
 }
 
 const bootstrapOptions: BootstrapOptions = {
-  enableParcel: true,
   port: CARGO_PORT,
 };
 
