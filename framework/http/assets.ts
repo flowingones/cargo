@@ -27,6 +27,7 @@ function registerAssets(pathToFile: string) {
     const file = await Deno.readFile(pathToFile);
     return new Response(file, {
       headers: {
+        "Cache-Control": "max-age=3600",
         "content-type":
           mimeTypeByExtension(getFileExtension(pathToFile))?.type ||
           "text/plain",
