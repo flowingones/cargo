@@ -15,19 +15,37 @@ const CONTEXT = "APP";
 
 const chain: Middleware[] = [];
 export interface BootstrapOptions {
-  port: number;
+  [key: string]: unknown;
+  port?: number;
+  autoloadRoutes?: boolean;
+  autoloadPages?: boolean;
+  autoloadAssets?: boolean;
 }
 
-const bootstrapOptions: BootstrapOptions = {
+interface DefaultBootstrapOptions extends BootstrapOptions {
+  port: number;
+  autoloadRoutes: boolean;
+  autoloadPages: boolean;
+  autoloadAssets: boolean;
+}
+
+const bootstrapOptions: DefaultBootstrapOptions = {
   port: CARGO_PORT,
+  autoloadRoutes: true,
+  autoloadPages: true,
+  autoloadAssets: true,
 };
 
-export async function bootstrap() {
-  if (!(await loadRoutes(CARGO_ROUTES_DIRECTORY))) {
-    log(CONTEXT, "No routes from the 'routes' directory loaded!");
+export async function bootstrap(options: BootstrapOptions = {}) {
+  overrideBootstrapOptions(options);
+
+  if (bootstrapOptions.autoloadRoutes) {
+    await autoloadRoutes(CARGO_ROUTES_DIRECTORY);
   }
 
-  await assetsFromDir();
+  if (bootstrapOptions.autoloadAssets) {
+    await assetsFromDir();
+  }
 
   middleware(rawBody);
   middleware(searchParams);
@@ -84,7 +102,7 @@ const App = {
   middleware,
 };
 
-async function loadRoutes(path: string): Promise<boolean> {
+async function autoloadRoutes(path: string): Promise<boolean> {
   let routesLoaded = false;
 
   if (!(await isDirectory(path))) {
@@ -103,5 +121,18 @@ async function loadRoutes(path: string): Promise<boolean> {
       }
     }
   }
+  if (routesLoaded) {
+    log(CONTEXT, "No routes from the 'routes' directory loaded!");
+  }
   return routesLoaded;
+}
+
+function overrideBootstrapOptions(
+  options: BootstrapOptions,
+): void {
+  for (const option in bootstrapOptions) {
+    if (options[option]) {
+      bootstrapOptions[option] = options[option];
+    }
+  }
 }
