@@ -39,5 +39,4 @@ Get("/:message", ({ auth }) => {
 /*
  * 4. Bootstrap and Run the Application
  */
-(await bootstrap({ autoloadRoutes: false, autoloadAssets: false, port: 2020 }))
-  .run();
+(await bootstrap()).run();
