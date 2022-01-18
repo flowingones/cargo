@@ -1,9 +1,9 @@
-import { bootstrap } from "https://deno.land/x/cargo@0.1.13/mod.ts";
-import { Get } from "https://deno.land/x/cargo@0.1.13/http/mod.ts";
+import { bootstrap } from "https://deno.land/x/cargo@0.1.14/mod.ts";
+import { Get } from "https://deno.land/x/cargo@0.1.14/http/mod.ts";
 import {
   Authenticator,
   LocalStrategy,
-} from "https://deno.land/x/cargo@0.1.13/auth/mod.ts";
+} from "https://deno.land/x/cargo@0.1.14/auth/mod.ts";
 
 interface AuthenticatedUser {
   name: string;
@@ -39,4 +39,5 @@ Get("/:message", ({ auth }) => {
 /*
  * 4. Bootstrap and Run the Application
  */
-(await bootstrap()).run();
+(await bootstrap({ autoloadRoutes: false, autoloadAssets: false, port: 2020 }))
+  .run();
