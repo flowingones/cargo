@@ -1,28 +1,11 @@
-import { serve } from "./deps.ts";
-import { assetsFromDir, Router } from "./http/mod.ts";
-import { handleException } from "./exceptions/handle-exception.ts";
-import {
-  Middleware,
-  rawBody,
-  searchParams,
-  walkthroughAndHandle,
-} from "./middleware/mod.ts";
-import { isDirectory, log } from "./utils/mod.ts";
+import { BootstrapOptions } from "./http/mod.ts";
+import { Middleware } from "./middleware/mod.ts";
+import { CARGO_PORT } from "./constants.ts";
+import { init } from "./http/context.ts";
+import { override } from "./utils/options.ts";
 
-import { CARGO_PORT, CARGO_ROUTES_DIRECTORY } from "./constants.ts";
-
-const CONTEXT = "APP";
-
-const chain: Middleware[] = [];
-export interface BootstrapOptions {
-  [key: string]: unknown;
-  port?: number;
-  autoloadRoutes?: boolean;
-  autoloadPages?: boolean;
-  autoloadAssets?: boolean;
-}
-
-interface DefaultBootstrapOptions extends BootstrapOptions {
+export interface DefaultBootstrapOptions extends BootstrapOptions {
+  defaultContext: string;
   port: number;
   autoloadRoutes: boolean;
   autoloadPages: boolean;
@@ -30,109 +13,78 @@ interface DefaultBootstrapOptions extends BootstrapOptions {
 }
 
 const bootstrapOptions: DefaultBootstrapOptions = {
+  defaultContext: "http",
   port: CARGO_PORT,
   autoloadRoutes: true,
   autoloadPages: true,
   autoloadAssets: true,
 };
 
-export async function bootstrap(options: BootstrapOptions = {}) {
-  overrideBootstrapOptions(options);
-
-  if (bootstrapOptions.autoloadRoutes) {
-    await autoloadRoutes(CARGO_ROUTES_DIRECTORY);
-  }
-
-  if (bootstrapOptions.autoloadAssets) {
-    await assetsFromDir();
-  }
-
-  middleware(rawBody);
-  middleware(searchParams);
-
-  return App;
+interface App {
+  run(port?: number): void;
+  setContext(context: RegisteredContext): App;
+  getContext(name: string): Context | undefined;
+  middleware(middleware: Middleware | Middleware[]): App;
 }
 
-function run(port = bootstrapOptions.port): void {
-  logRegisteredRoutes();
-  listen(port);
+interface Context {
+  middleware(middleware: Middleware | Middleware[]): Context;
+  listen(port?: number): void;
 }
 
-function middleware(middleware: Middleware | Middleware[]) {
-  if (middleware instanceof Array) {
-    for (const eachMiddleware of middleware) {
-      chain.push(eachMiddleware);
-    }
-  } else {
-    chain.push(middleware);
-  }
-  return App;
+interface RegisteredContext {
+  name: string;
+  context: Context;
 }
 
-function listen(port: number) {
-  serve(
-    async (request: Request) => {
-      try {
-        return await walkthroughAndHandle(
-          {
-            request: request,
-          },
-          chain,
-          Router.resolve,
-        );
-      } catch (error: unknown) {
-        return handleException(error);
-      }
-    },
-    {
-      port: port,
-    },
-  );
-  log(CONTEXT, `Listening on http://localhost:${port}`);
-}
-
-function logRegisteredRoutes() {
-  Router.getRoutes().forEach((route) => {
-    log("ROUTE", `${route.method} ${route.path.pathname}`);
-  });
-}
-
-const App = {
+const App: App = {
   run,
+  setContext,
+  getContext,
   middleware,
 };
 
-async function autoloadRoutes(path: string): Promise<boolean> {
-  let routesLoaded = false;
+const contexts: RegisteredContext[] = [];
 
-  if (!(await isDirectory(path))) {
-    return routesLoaded;
-  }
+export async function bootstrap(
+  options: BootstrapOptions = {},
+): Promise<App> {
+  override(bootstrapOptions, options);
 
-  for await (const file of Deno.readDir(path)) {
-    if (!routesLoaded) {
-      routesLoaded = true;
-    }
-    if (file.isFile) {
-      try {
-        await import(`file://${Deno.cwd()}/${path}/${file.name}`);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
-  if (routesLoaded) {
-    log(CONTEXT, "No routes from the 'routes' directory loaded!");
-  }
-  return routesLoaded;
+  setContext({
+    name: "http",
+    context: await init(bootstrapOptions),
+  });
+
+  return App;
 }
 
-function overrideBootstrapOptions(
-  options: BootstrapOptions,
-): void {
-  for (const option in bootstrapOptions) {
-    if (options[option]) {
-      bootstrapOptions[option] = options[option];
+function run(port: number = CARGO_PORT): void {
+  for (const context of contexts) {
+    if (context.name === bootstrapOptions.defaultContext) {
+      context.context.listen(port);
+    } else {
+      context.context.listen();
     }
   }
+}
+
+function middleware(
+  middleware: Middleware | Middleware[],
+): App {
+  contexts.find((context) => {
+    return context.name === bootstrapOptions.defaultContext;
+  })?.context?.middleware(middleware);
+  return App;
+}
+
+function setContext(context: RegisteredContext): App {
+  contexts.push(context);
+  return App;
+}
+
+function getContext(name: string): Context | undefined {
+  return contexts.find((context) => {
+    return context.name === name;
+  })?.context;
 }
