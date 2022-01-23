@@ -13,23 +13,23 @@ import {
   walkthroughAndHandle,
 } from "../middleware/mod.ts";
 
-const CONTEXT = "CONTEXT(HTTP)";
+const CONTEXT = "PROTOCOL (HTTP)";
 const chain: Middleware[] = [];
 
-export interface BootstrapOptions {
+export interface InitOptions {
   [key: string]: unknown;
   port?: number;
   autoloadRoutes?: boolean;
-  autoloadPages?: boolean;
   autoloadAssets?: boolean;
+  autoloader?: (() => Promise<void>)[];
 }
 
-const Context = {
+const Protocol = {
   listen,
   middleware,
 };
 
-export async function init(options: BootstrapOptions = {}) {
+export async function init(options: InitOptions = {}) {
   if (options.autoloadRoutes) {
     await autoloadRoutes(CARGO_ROUTES_DIRECTORY, CONTEXT);
   }
@@ -38,10 +38,16 @@ export async function init(options: BootstrapOptions = {}) {
     await autoloadAssets(CARGO_ASSETS_DIRECTORY, CONTEXT);
   }
 
+  if (options.autoloader?.length) {
+    for (const autoloader of options.autoloader) {
+      await autoloader();
+    }
+  }
+
   middleware(rawBody);
   middleware(searchParams);
 
-  return Context;
+  return Protocol;
 }
 
 function listen(port: number) {
@@ -80,7 +86,7 @@ function middleware(middleware: Middleware | Middleware[]) {
   } else {
     chain.push(middleware);
   }
-  return Context;
+  return Protocol;
 }
 
 function logRegisteredRoutes() {
