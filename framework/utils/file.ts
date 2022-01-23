@@ -1,4 +1,4 @@
-import { extname } from "../deps.ts";
+import { parse } from "../deps.ts";
 
 export async function isDirectory(path: string): Promise<boolean> {
   try {
@@ -11,6 +11,10 @@ export async function isDirectory(path: string): Promise<boolean> {
   }
 }
 
-export function getFileExtension(path: string) {
-  return extname(path).replace(".", "");
+export function extension(path: string) {
+  return parse(path).ext;
+}
+
+export function name(path: string): string {
+  return parse(path).name;
 }
