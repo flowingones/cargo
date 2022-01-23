@@ -1,17 +1,12 @@
 import { Get } from "./mod.ts";
-import { getFileExtension, log, mimeTypeByExtension } from "../utils/mod.ts";
+import { extension, log, mimeTypeByExtension } from "../utils/mod.ts";
 
 export async function autoloadRoutes(
   path: string,
   context?: string,
 ): Promise<void> {
-  let routesLoaded = false;
-
   try {
     for await (const file of Deno.readDir(path)) {
-      if (!routesLoaded) {
-        routesLoaded = true;
-      }
       if (file.isFile) {
         try {
           await import(`file://${Deno.cwd()}/${path}/${file.name}`);
@@ -29,18 +24,17 @@ export async function autoloadRoutes(
 }
 
 export async function autoloadAssets(
-  directoryPath: string,
+  path: string,
   context?: string,
 ): Promise<void> {
-  const basePath = directoryPath;
   try {
-    for await (const file of Deno.readDir(basePath)) {
+    for await (const file of Deno.readDir(path)) {
       if (file.isDirectory || file.isSymlink) {
         await autoloadAssets(
-          `${basePath}/${file.name}`,
+          `${path}/${file.name}`,
         );
       } else {
-        registerAssets(`${basePath}/${file.name}`);
+        registerAssets(`${path}/${file.name}`);
       }
     }
   } catch (_err: unknown) {
@@ -51,14 +45,13 @@ export async function autoloadAssets(
   }
 }
 
-function registerAssets(pathToFile: string) {
-  Get(`/${pathToFile}`, async () => {
-    const file = await Deno.readFile(pathToFile);
+function registerAssets(path: string) {
+  Get(`/${path}`, async () => {
+    const file = await Deno.readFile(path);
     return new Response(file, {
       headers: {
         "Cache-Control": "max-age=3600",
-        "content-type":
-          mimeTypeByExtension(getFileExtension(pathToFile))?.type ||
+        "content-type": mimeTypeByExtension(extension(path))?.type ||
           "text/plain",
       },
     });
