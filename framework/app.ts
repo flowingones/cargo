@@ -1,70 +1,68 @@
-import { BootstrapOptions } from "./http/mod.ts";
+import { init, InitOptions } from "./http/mod.ts";
 import { Middleware } from "./middleware/mod.ts";
 import { CARGO_PORT } from "./constants.ts";
-import { init } from "./http/context.ts";
 import { override } from "./utils/options.ts";
 
-export interface DefaultBootstrapOptions extends BootstrapOptions {
-  defaultContext: string;
+export interface BootstrapOptions extends InitOptions {
+  defaultProtocol: string;
   port: number;
   autoloadRoutes: boolean;
-  autoloadPages: boolean;
   autoloadAssets: boolean;
 }
 
-const bootstrapOptions: DefaultBootstrapOptions = {
-  defaultContext: "http",
+const bootstrapOptions: BootstrapOptions = {
+  defaultProtocol: "http",
   port: CARGO_PORT,
   autoloadRoutes: true,
-  autoloadPages: true,
   autoloadAssets: true,
+  autoloader: [],
 };
 
 interface App {
   run(port?: number): void;
-  setContext(context: RegisteredContext): App;
-  getContext(name: string): Context | undefined;
+  setProtocol(protocol: RegisteredProtocol): App;
+  getProtocol(name: string): Protocol | undefined;
   middleware(middleware: Middleware | Middleware[]): App;
 }
 
-interface Context {
-  middleware(middleware: Middleware | Middleware[]): Context;
+interface Protocol {
+  middleware(middleware: Middleware | Middleware[]): Protocol;
   listen(port?: number): void;
 }
 
-interface RegisteredContext {
+interface RegisteredProtocol {
   name: string;
-  context: Context;
+  protocol: Protocol;
 }
 
 const App: App = {
   run,
-  setContext,
-  getContext,
+  setProtocol,
+  getProtocol,
   middleware,
 };
 
-const contexts: RegisteredContext[] = [];
+const protocols: RegisteredProtocol[] = [];
 
 export async function bootstrap(
-  options: BootstrapOptions = {},
+  options: InitOptions = {},
 ): Promise<App> {
   override(bootstrapOptions, options);
 
-  setContext({
+  setProtocol({
     name: "http",
-    context: await init(bootstrapOptions),
+    protocol: await init(bootstrapOptions),
   });
 
   return App;
 }
 
 function run(port: number = CARGO_PORT): void {
-  for (const context of contexts) {
-    if (context.name === bootstrapOptions.defaultContext) {
-      context.context.listen(port);
+  for (const protocol of protocols) {
+    if (protocol.name === bootstrapOptions.defaultProtocol) {
+      protocol.protocol.listen(port);
     } else {
-      context.context.listen();
+      protocol.protocol.listen();
     }
   }
 }
@@ -72,19 +70,19 @@ function run(port: number = CARGO_PORT): void {
 function middleware(
   middleware: Middleware | Middleware[],
 ): App {
-  contexts.find((context) => {
-    return context.name === bootstrapOptions.defaultContext;
-  })?.context?.middleware(middleware);
+  protocols.find((protocol) => {
+    return protocol.name === bootstrapOptions.defaultProtocol;
+  })?.protocol?.middleware(middleware);
   return App;
 }
 
-function setContext(context: RegisteredContext): App {
-  contexts.push(context);
+function setProtocol(protocol: RegisteredProtocol): App {
+  protocols.push(protocol);
   return App;
 }
 
-function getContext(name: string): Context | undefined {
-  return contexts.find((context) => {
-    return context.name === name;
-  })?.context;
+function getProtocol(name: string): Protocol | undefined {
+  return protocols.find((protocol) => {
+    return protocol.name === name;
+  })?.protocol;
 }
