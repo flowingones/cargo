@@ -12,7 +12,6 @@ export async function isDirectory(path: string): Promise<boolean> {
 }
 
 export function extension(path: string) {
-  console.log(parse(path));
   return parse(path).ext.replace(".", "");
 }
 
