@@ -15,6 +15,9 @@ export function extension(path: string) {
   return parse(path).ext.replace(".", "");
 }
 
-export function name(path: string): string {
+/* @deprecated */
+export function base(path: string): string {
   return parse(path).name;
 }
+
+export const name = base;
