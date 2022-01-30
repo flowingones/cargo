@@ -6,3 +6,4 @@ export * from "./route.ts";
 export * from "./router.ts";
 export * from "./autoload.ts";
 export * from "./protocol.ts";
+export * from "./exceptions/mod.ts";
