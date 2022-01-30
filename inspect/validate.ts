@@ -1,9 +1,6 @@
-import type { RequestContext } from "./deps.ts";
-import { BadRequestException } from "./deps.ts";
+import { BadRequestException, Next, RequestContext } from "./deps.ts";
 
 import { BaseSchema } from "./mod.ts";
-
-import { Next } from "https://deno.land/x/cargo@0.1.21/middleware/mod.ts";
 
 class ValidationException extends BadRequestException {
   constructor(public error: string[]) {
