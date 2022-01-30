@@ -1,9 +1,9 @@
-import { bootstrap } from "https://deno.land/x/cargo@0.1.26/mod.ts";
-import { Get } from "https://deno.land/x/cargo@0.1.26/http/mod.ts";
+import { bootstrap } from "https://deno.land/x/cargo@0.1.27/mod.ts";
+import { Get } from "https://deno.land/x/cargo@0.1.27/http/mod.ts";
 import {
   Authenticator,
   LocalStrategy,
-} from "https://deno.land/x/cargo@0.1.26/auth/mod.ts";
+} from "https://deno.land/x/cargo@0.1.27/auth/mod.ts";
 
 interface AuthenticatedUser {
   name: string;
