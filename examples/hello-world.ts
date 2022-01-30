@@ -1,6 +1,6 @@
-import { bootstrap } from "https://deno.land/x/cargo@0.1.25/mod.ts";
-import { Get, UrlParams } from "https://deno.land/x/cargo@0.1.25/http/mod.ts";
-import { timeToResponse } from "https://deno.land/x/cargo@0.1.25/middleware/mod.ts";
+import { bootstrap } from "https://deno.land/x/cargo@0.1.26/mod.ts";
+import { Get, UrlParams } from "https://deno.land/x/cargo@0.1.26/http/mod.ts";
+import { timeToResponse } from "https://deno.land/x/cargo@0.1.26/middleware/mod.ts";
 
 interface MessageParams extends UrlParams {
   message: string;
