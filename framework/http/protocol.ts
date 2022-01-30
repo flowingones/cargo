@@ -1,5 +1,9 @@
-import { handleException } from "../exceptions/handle-exception.ts";
-import { autoloadAssets, autoloadRoutes, Router } from "./mod.ts";
+import {
+  autoloadAssets,
+  autoloadRoutes,
+  handleException,
+  Router,
+} from "./mod.ts";
 import {
   CARGO_ASSETS_DIRECTORY,
   CARGO_ROUTES_DIRECTORY,

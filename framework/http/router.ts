@@ -1,7 +1,11 @@
-import { method } from "./request.ts";
-import { getUrlParams, RequestContext, Route } from "./mod.ts";
-import { NotFoundException } from "../exceptions/not-found-exception.ts";
 import { walkthroughAndHandle } from "../middleware/middleware.ts";
+import {
+  getUrlParams,
+  method,
+  NotFoundException,
+  RequestContext,
+  Route,
+} from "./mod.ts";
 
 const routes: Route[] = [];
 

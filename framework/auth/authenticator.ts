@@ -1,6 +1,5 @@
-import { RequestContext } from "../http/mod.ts";
+import { RequestContext, UnauthorizedException } from "../http/mod.ts";
 import { Middleware, Next } from "../middleware/middleware.ts";
-import { UnauthorizedException } from "../exceptions/mod.ts";
 
 export interface Instructions<T> {
   allow: (entity: T) => void;
