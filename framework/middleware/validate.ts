@@ -7,9 +7,11 @@ export function validateBody(schema: BaseSchema) {
   return (ctx: RequestContext, next: Next) => {
     const errors = schema.validate(ctx.body, "Request Body").errors;
     if (errors) {
-      throw new BadRequestException().error = errors.map((error) => {
+      const exception = new BadRequestException();
+      exception.error = errors.map((error) => {
         return `${error.message}`;
       });
+      throw exception;
     }
     return next(ctx);
   };

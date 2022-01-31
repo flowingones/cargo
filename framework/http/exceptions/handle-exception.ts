@@ -19,7 +19,6 @@ export function handleException(exception: unknown): Response {
       error: (<HttpException> exception).error,
     };
   }
-  console.error(exception);
   return new Response(JSON.stringify(body), {
     status: body.status,
     headers: {
