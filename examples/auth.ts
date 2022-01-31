@@ -30,10 +30,6 @@ Authenticator.strategy(
  */
 Get("/:message", ({ auth }) => {
   return new Response(`${(<AuthenticatedUser> auth).name}`);
-}).validate({
-  body: new ObjectSchema({
-    name: new StringSchema(),
-  }),
 })
   /*
    * 3. Protect route with strategy
