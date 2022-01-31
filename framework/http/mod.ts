@@ -1,3 +1,4 @@
+export * from "./exceptions/mod.ts";
 export * from "./http-method.ts";
 export * from "./http-status.ts";
 export * from "./request.ts";
@@ -6,4 +7,3 @@ export * from "./route.ts";
 export * from "./router.ts";
 export * from "./autoload.ts";
 export * from "./protocol.ts";
-export * from "./exceptions/mod.ts";
