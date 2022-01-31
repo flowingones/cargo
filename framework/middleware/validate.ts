@@ -1,6 +1,7 @@
-import { BadRequestException, Next, RequestContext } from "./deps.ts";
+import { BadRequestException, RequestContext } from "../http/mod.ts";
+import { Next } from "./middleware.ts";
 
-import { BaseSchema } from "./mod.ts";
+import { BaseSchema } from "../deps.ts";
 
 class ValidationException extends BadRequestException {
   constructor(public error: string[]) {
