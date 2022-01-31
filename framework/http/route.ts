@@ -1,7 +1,12 @@
+import { BaseSchema } from "../deps.ts";
 import { Router } from "./router.ts";
 import { Handler, HttpMethod, RouteParams } from "./mod.ts";
 
-import { Middleware } from "../middleware/mod.ts";
+import { Middleware, validateBody } from "../middleware/mod.ts";
+
+interface ValidationOptions {
+  body?: BaseSchema;
+}
 
 export class Route {
   path: URLPattern;
@@ -22,6 +27,12 @@ export class Route {
       }
     } else {
       this.chain.push(middleware);
+    }
+    return this;
+  }
+  validate(options: ValidationOptions): Route {
+    if (options.body) {
+      this.middleware(validateBody(options.body));
     }
     return this;
   }
