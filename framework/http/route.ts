@@ -27,50 +27,30 @@ export class Route {
   }
 }
 
-export function Get(path: string, handler: Handler) {
-  const route = new Route({
-    path: new URLPattern({ pathname: path }),
-    method: HttpMethod.GET,
-    handler: handler,
-  });
-  Router.add(route);
-  return route;
+export function Get(path: string, handler: Handler): Route {
+  return addRoute(path, handler, HttpMethod.GET);
 }
 
-export function Post(path: string, handler: Handler) {
-  const route = new Route({
-    path: new URLPattern({ pathname: path }),
-    method: HttpMethod.POST,
-    handler: handler,
-  });
-  Router.add(route);
-  return route;
+export function Post(path: string, handler: Handler): Route {
+  return addRoute(path, handler, HttpMethod.POST);
 }
 
-export function Put(path: string, handler: Handler) {
-  const route = new Route({
-    path: new URLPattern({ pathname: path }),
-    method: HttpMethod.PUT,
-    handler: handler,
-  });
-  Router.add(route);
-  return route;
+export function Put(path: string, handler: Handler): Route {
+  return addRoute(path, handler, HttpMethod.PUT);
 }
 
-export function Patch(path: string, handler: Handler) {
-  const route = new Route({
-    path: new URLPattern({ pathname: path }),
-    method: HttpMethod.PATCH,
-    handler: handler,
-  });
-  Router.add(route);
-  return route;
+export function Patch(path: string, handler: Handler): Route {
+  return addRoute(path, handler, HttpMethod.PATCH);
 }
 
-export function Delete(path: string, handler: Handler) {
+export function Delete(path: string, handler: Handler): Route {
+  return addRoute(path, handler, HttpMethod.DELETE);
+}
+
+function addRoute(path: string, handler: Handler, method: HttpMethod) {
   const route = new Route({
     path: new URLPattern({ pathname: path }),
-    method: HttpMethod.DELETE,
+    method: method,
     handler: handler,
   });
   Router.add(route);
