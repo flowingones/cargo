@@ -3,7 +3,7 @@ import { Next } from "./middleware.ts";
 
 import { BaseSchema } from "../deps.ts";
 
-class ValidationException extends BadRequestException {
+export class ValidationException extends BadRequestException {
   constructor(public error: string[]) {
     super();
   }
