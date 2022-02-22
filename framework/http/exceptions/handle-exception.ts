@@ -18,8 +18,8 @@ export function handleException(exception: unknown): Response {
       status: (<HttpException> exception).status,
       error: (<HttpException> exception).error,
     };
-    console.error(exception);
   }
+  console.error(exception);
   return new Response(JSON.stringify(body), {
     status: body.status,
     headers: {
