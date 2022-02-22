@@ -1,9 +1,9 @@
-import { bootstrap } from "https://deno.land/x/cargo@0.1.30/mod.ts";
-import { Get } from "https://deno.land/x/cargo@0.1.30/http/mod.ts";
+import { bootstrap } from "https://deno.land/x/cargo@0.1.31/mod.ts";
+import { Get } from "https://deno.land/x/cargo@0.1.31/http/mod.ts";
 import {
   Authenticator,
   LocalStrategy,
-} from "https://deno.land/x/cargo@0.1.30/auth/mod.ts";
+} from "https://deno.land/x/cargo@0.1.31/auth/mod.ts";
 
 interface AuthenticatedUser {
   name: string;
@@ -30,10 +30,6 @@ Authenticator.strategy(
  */
 Get("/:message", ({ auth }) => {
   return new Response(`${(<AuthenticatedUser> auth).name}`);
-}).validate({
-  body: new ObjectSchema({
-    name: new StringSchema(),
-  }),
 })
   /*
    * 3. Protect route with strategy
