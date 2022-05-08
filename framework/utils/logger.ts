@@ -17,11 +17,21 @@ function bold(text: string) {
 }
 
 function date(date: Date): string {
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${
-    time(date)
-  }`;
+  return `${doubleDigits(date.getDate())}.${
+    doubleDigits(date.getMonth() + 1)
+  }.${doubleDigits(date.getFullYear())} ${time(date)}`;
 }
 
 function time(date: Date): string {
-  return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  return `${doubleDigits(date.getHours())}:${doubleDigits(date.getMinutes())}:${
+    doubleDigits(date.getSeconds())
+  }`;
+}
+
+function doubleDigits(number: number): string {
+  const str = number.toString();
+  if (str.length === 1) {
+    return `0${str}`;
+  }
+  return str;
 }
