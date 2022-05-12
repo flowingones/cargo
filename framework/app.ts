@@ -1,7 +1,6 @@
 import { init, InitOptions } from "./http/mod.ts";
 import { Middleware } from "./middleware/mod.ts";
 import { CARGO_PORT } from "./constants.ts";
-import { override } from "./utils/options.ts";
 
 export interface BootstrapOptions extends InitOptions {
   defaultProtocol: string;
@@ -10,7 +9,7 @@ export interface BootstrapOptions extends InitOptions {
   autoloadAssets: boolean;
 }
 
-const bootstrapOptions: BootstrapOptions = {
+let defaultOptions: BootstrapOptions = {
   defaultProtocol: "http",
   port: CARGO_PORT,
   autoloadRoutes: true,
@@ -47,19 +46,19 @@ const protocols: RegisteredProtocol[] = [];
 export async function bootstrap(
   options: InitOptions = {},
 ): Promise<App> {
-  override(bootstrapOptions, options);
+  defaultOptions = { ...defaultOptions, ...options };
 
   setProtocol({
     name: "http",
-    protocol: await init(bootstrapOptions),
+    protocol: await init(defaultOptions),
   });
 
   return App;
 }
 
-function run(port: number = CARGO_PORT): void {
+function run(port: number = defaultOptions.port): void {
   for (const protocol of protocols) {
-    if (protocol.name === bootstrapOptions.defaultProtocol) {
+    if (protocol.name === defaultOptions.defaultProtocol) {
       protocol.protocol.listen(port);
     } else {
       protocol.protocol.listen();
@@ -71,7 +70,7 @@ function middleware(
   middleware: Middleware | Middleware[],
 ): App {
   protocols.find((protocol) => {
-    return protocol.name === bootstrapOptions.defaultProtocol;
+    return protocol.name === defaultOptions.defaultProtocol;
   })?.protocol?.middleware(middleware);
   return App;
 }
