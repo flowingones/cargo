@@ -47,8 +47,8 @@ export async function autoloadAssets(
 
 function registerAssets(path: string) {
   Get(`/${path}`, async () => {
-    const file = await Deno.readFile(path);
-    return new Response(file, {
+    const file = await Deno.open(path);
+    return new Response(file.readable, {
       headers: {
         "Cache-Control": "max-age=3600",
         "content-type": mimeTypeByExtension(extension(path))?.type ||

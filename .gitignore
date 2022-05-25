@@ -2,3 +2,4 @@
 .idea/*
 examples/parcel/*
 archive/*
+.DS_STORE
