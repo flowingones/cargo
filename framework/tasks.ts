@@ -32,7 +32,7 @@ async function process(tasks: Task[]) {
   }
 }
 
-export const TaskHub = {
+export const TaskWorker = {
   add,
   hooks,
   process,

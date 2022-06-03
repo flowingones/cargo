@@ -1,7 +1,7 @@
 import { init } from "./http/mod.ts";
 import { Middleware } from "./middleware/mod.ts";
 import { CARGO_PORT } from "./constants.ts";
-import { Hooks, TaskHub, Tasks } from "./tasks.ts";
+import { Hooks, Tasks, TaskWorker } from "./tasks.ts";
 
 export interface BootstrapOptions {
   defaultProtocol: string;
@@ -49,7 +49,7 @@ export async function bootstrap(
     registerTasks(defaultOptions.tasks);
   }
 
-  await TaskHub.process(TaskHub.hooks(Hooks.onBootstrap));
+  await TaskWorker.process(TaskWorker.hooks(Hooks.onBootstrap));
 
   setProtocol({
     name: "http",
@@ -92,7 +92,7 @@ function getProtocol(name: string): Protocol | undefined {
 function registerTasks(tasks: Partial<Tasks>) {
   if (Array.isArray(tasks.onBootstrap)) {
     tasks.onBootstrap.forEach((task) => {
-      TaskHub.add({ type: Hooks.onBootstrap, task });
+      TaskWorker.add({ type: Hooks.onBootstrap, task });
     });
   }
 }
