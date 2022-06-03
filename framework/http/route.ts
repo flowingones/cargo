@@ -21,7 +21,7 @@ export class Route {
   }
 
   middleware(middleware: Middleware | Middleware[]): Route {
-    if (middleware instanceof Array) {
+    if (Array.isArray(middleware)) {
       for (const eachMiddleware of middleware) {
         this.chain.push(eachMiddleware);
       }

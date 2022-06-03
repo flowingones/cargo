@@ -16,7 +16,7 @@ export class RouteGroup {
   }
 
   middleware(middleware: Middleware | Middleware[]): RouteGroup {
-    if (middleware instanceof Array) {
+    if (Array.isArray(middleware)) {
       for (const eachMiddleware of middleware) {
         this.chain.push(eachMiddleware);
       }
@@ -30,7 +30,7 @@ export class RouteGroup {
   }
 
   route(toRoute: Route | Route[]): RouteGroup {
-    if (toRoute instanceof Array) {
+    if (Array.isArray(toRoute)) {
       for (const route of toRoute) {
         this.routes.push(this.prepare(route));
       }
