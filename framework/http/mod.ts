@@ -5,5 +5,6 @@ export * from "./request.ts";
 export * from "./group.ts";
 export * from "./route.ts";
 export * from "./router.ts";
-export * from "./autoload.ts";
 export * from "./protocol.ts";
+export { autoloadRoutes } from "./tasks/routes.ts";
+export { autoloadAssets } from "./tasks/assets.ts";
