@@ -46,7 +46,7 @@ export async function bootstrap(
   defaultOptions = { ...defaultOptions, ...options };
 
   if (defaultOptions.tasks) {
-    loadTasks(defaultOptions.tasks);
+    registerTasks(defaultOptions.tasks);
   }
 
   await TaskHub.process(TaskHub.hooks(Hooks.onBootstrap));
@@ -89,7 +89,7 @@ function getProtocol(name: string): Protocol | undefined {
   })?.protocol;
 }
 
-function loadTasks(tasks: Partial<Tasks>) {
+function registerTasks(tasks: Partial<Tasks>) {
   if (Array.isArray(tasks.onBootstrap)) {
     tasks.onBootstrap.forEach((task) => {
       TaskHub.add({ type: Hooks.onBootstrap, task });
