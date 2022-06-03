@@ -1,13 +1,4 @@
-import {
-  autoloadAssets,
-  autoloadRoutes,
-  handleException,
-  Router,
-} from "./mod.ts";
-import {
-  CARGO_ASSETS_DIRECTORY,
-  CARGO_ROUTES_DIRECTORY,
-} from "../constants.ts";
+import { handleException, Router } from "./mod.ts";
 import { log } from "../utils/mod.ts";
 import { serve } from "../deps.ts";
 import {
@@ -23,9 +14,6 @@ const chain: Middleware[] = [];
 export interface InitOptions {
   [key: string]: unknown;
   port?: number;
-  autoloadRoutes?: boolean;
-  autoloadAssets?: boolean;
-  autoloader?: (() => Promise<void>)[];
 }
 
 const Protocol = {
@@ -33,21 +21,7 @@ const Protocol = {
   middleware,
 };
 
-export async function init(options: InitOptions = {}) {
-  if (options.autoloadRoutes) {
-    await autoloadRoutes(CARGO_ROUTES_DIRECTORY, CONTEXT);
-  }
-
-  if (options.autoloadAssets) {
-    await autoloadAssets(CARGO_ASSETS_DIRECTORY, CONTEXT);
-  }
-
-  if (options.autoloader?.length) {
-    for (const autoloader of options.autoloader) {
-      await autoloader();
-    }
-  }
-
+export function init() {
   middleware(rawBody);
   middleware(searchParams);
 
@@ -58,7 +32,7 @@ function listen(port: number) {
   logRegisteredRoutes();
 
   if (!port) {
-    throw new Error("Http Port not defined!");
+    throw new Error("Http port not defined!");
   }
 
   serve(
@@ -83,7 +57,7 @@ function listen(port: number) {
 }
 
 function middleware(middleware: Middleware | Middleware[]) {
-  if (middleware instanceof Array) {
+  if (Array.isArray(middleware)) {
     for (const eachMiddleware of middleware) {
       chain.push(eachMiddleware);
     }

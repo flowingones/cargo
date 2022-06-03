@@ -8,6 +8,18 @@ export function log(context: string, message: string) {
   );
 }
 
+export function info(context: string, message: string) {
+  console.info(
+    `${bold(date(new Date()))} ${bold(yellow(NAME))} ${
+      bold(context)
+    } ${message}`,
+  );
+}
+
+function yellow(text: string) {
+  return `\x1b[33m${text}\x1b[0m`;
+}
+
 function green(text: string) {
   return `\x1b[32m${text}\x1b[0m`;
 }

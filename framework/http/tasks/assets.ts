@@ -1,36 +1,23 @@
-import { Get } from "./mod.ts";
-import { extension, log, mimeTypeByExtension } from "../utils/mod.ts";
+import { extension, log, mimeTypeByExtension } from "../../utils/mod.ts";
+import { Get } from "../mod.ts";
 
-export async function autoloadRoutes(
+export function autoloadAssets(
   path: string,
   context?: string,
-): Promise<void> {
-  try {
-    for await (const file of Deno.readDir(path)) {
-      if (file.isFile) {
-        try {
-          await import(`file://${Deno.cwd()}/${path}/${file.name}`);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    }
-  } catch (_err: unknown) {
-    log(
-      context || "HTTP CONTEXT",
-      "No routes from the 'routes' directory loaded!",
-    );
-  }
+): () => Promise<void> {
+  return async () => {
+    return await loadAssets(path, context);
+  };
 }
 
-export async function autoloadAssets(
+async function loadAssets(
   path: string,
   context?: string,
 ): Promise<void> {
   try {
     for await (const file of Deno.readDir(path)) {
       if (file.isDirectory || file.isSymlink) {
-        await autoloadAssets(
+        await loadAssets(
           `${path}/${file.name}`,
         );
       } else {
@@ -40,7 +27,7 @@ export async function autoloadAssets(
   } catch (_err: unknown) {
     log(
       context || "HTTP CONTEXT",
-      "No routes from the 'assets' directory loaded!",
+      `No routes from the '${path}' directory loaded!`,
     );
   }
 }

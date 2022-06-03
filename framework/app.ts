@@ -1,23 +1,20 @@
-import { init, InitOptions } from "./http/mod.ts";
+import { init } from "./http/mod.ts";
 import { Middleware } from "./middleware/mod.ts";
 import { CARGO_PORT } from "./constants.ts";
+import { Hooks, TaskHub, Tasks } from "./tasks.ts";
 
-export interface BootstrapOptions extends InitOptions {
+export interface BootstrapOptions {
   defaultProtocol: string;
   port: number;
-  autoloadRoutes: boolean;
-  autoloadAssets: boolean;
+  tasks?: Partial<Tasks>;
 }
 
 let defaultOptions: BootstrapOptions = {
   defaultProtocol: "http",
   port: CARGO_PORT,
-  autoloadRoutes: true,
-  autoloadAssets: true,
-  autoloader: [],
 };
 
-interface App {
+export interface App {
   run(port?: number): void;
   setProtocol(protocol: RegisteredProtocol): App;
   getProtocol(name: string): Protocol | undefined;
@@ -34,7 +31,7 @@ interface RegisteredProtocol {
   protocol: Protocol;
 }
 
-const App: App = {
+const app: App = {
   run,
   setProtocol,
   getProtocol,
@@ -44,16 +41,22 @@ const App: App = {
 const protocols: RegisteredProtocol[] = [];
 
 export async function bootstrap(
-  options: InitOptions = {},
+  options: Partial<BootstrapOptions> = {},
 ): Promise<App> {
   defaultOptions = { ...defaultOptions, ...options };
 
+  if (defaultOptions.tasks) {
+    registerTasks(defaultOptions.tasks);
+  }
+
+  await TaskHub.process(TaskHub.hooks(Hooks.onBootstrap));
+
   setProtocol({
     name: "http",
-    protocol: await init(defaultOptions),
+    protocol: await Promise.resolve(init()),
   });
 
-  return App;
+  return app;
 }
 
 function run(port: number = defaultOptions.port): void {
@@ -72,16 +75,24 @@ function middleware(
   protocols.find((protocol) => {
     return protocol.name === defaultOptions.defaultProtocol;
   })?.protocol?.middleware(middleware);
-  return App;
+  return app;
 }
 
 function setProtocol(protocol: RegisteredProtocol): App {
   protocols.push(protocol);
-  return App;
+  return app;
 }
 
 function getProtocol(name: string): Protocol | undefined {
   return protocols.find((protocol) => {
     return protocol.name === name;
   })?.protocol;
+}
+
+function registerTasks(tasks: Partial<Tasks>) {
+  if (Array.isArray(tasks.onBootstrap)) {
+    tasks.onBootstrap.forEach((task) => {
+      TaskHub.add({ type: Hooks.onBootstrap, task });
+    });
+  }
 }
