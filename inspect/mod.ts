@@ -1,3 +1,3 @@
-// Cargo Inspect – Version 0.1.39
+// Cargo Inspect – Version 0.1.40
 export * from "./schema.ts";
 export * from "./schemas/mod.ts";

@@ -11,6 +11,9 @@ export async function timeToResponse(
 
   // Stop time tracking and log the time.
   const stopTime = Date.now();
-  log("REQUEST", `Request handled in ${stopTime - startTime} ms`);
+  log(
+    "REQUEST",
+    `Request to route ${ctx.request.url} took ${stopTime - startTime}ms`,
+  );
   return response;
 }
