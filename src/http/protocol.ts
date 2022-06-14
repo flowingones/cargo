@@ -19,6 +19,7 @@ export interface InitOptions {
 const Protocol = {
   listen,
   middleware,
+  router: Router,
 };
 
 export function init() {
