@@ -39,31 +39,41 @@ export class Route {
 }
 
 export function Get(path: string, handler: Handler): Route {
-  return addRoute(path, handler, HttpMethod.GET);
+  return Router.add({
+    path,
+    method: HttpMethod.GET,
+    handler,
+  });
 }
 
 export function Post(path: string, handler: Handler): Route {
-  return addRoute(path, handler, HttpMethod.POST);
+  return Router.add({
+    path,
+    method: HttpMethod.POST,
+    handler,
+  });
 }
 
 export function Put(path: string, handler: Handler): Route {
-  return addRoute(path, handler, HttpMethod.PUT);
+  return Router.add({
+    path,
+    method: HttpMethod.PUT,
+    handler,
+  });
 }
 
 export function Patch(path: string, handler: Handler): Route {
-  return addRoute(path, handler, HttpMethod.PATCH);
+  return Router.add({
+    path,
+    method: HttpMethod.PATCH,
+    handler,
+  });
 }
 
 export function Delete(path: string, handler: Handler): Route {
-  return addRoute(path, handler, HttpMethod.DELETE);
-}
-
-function addRoute(path: string, handler: Handler, method: HttpMethod) {
-  const route = new Route({
-    path: new URLPattern({ pathname: path }),
-    method: method,
-    handler: handler,
+  return Router.add({
+    path,
+    method: HttpMethod.DELETE,
+    handler,
   });
-  Router.add(route);
-  return route;
 }

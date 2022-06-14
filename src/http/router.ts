@@ -1,6 +1,9 @@
 import { walkthroughAndHandle } from "../middleware/middleware.ts";
+
 import {
   getUrlParams,
+  Handler,
+  HttpMethod,
   method,
   NotFoundException,
   RequestContext,
@@ -13,8 +16,16 @@ function getRoutes() {
   return routes;
 }
 
-function add(toRoute: Route) {
-  routes.push(toRoute);
+function add(
+  toRoute: { path: string; method: HttpMethod; handler: Handler },
+): Route {
+  const route = new Route({
+    path: new URLPattern({ pathname: toRoute.path }),
+    method: toRoute.method,
+    handler: toRoute.handler,
+  });
+  routes.push(route);
+  return route;
 }
 
 function resolve(ctx: RequestContext): Promise<Response> {

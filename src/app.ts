@@ -49,12 +49,12 @@ export async function bootstrap(
     registerTasks(defaultOptions.tasks);
   }
 
-  await TaskWorker.process(TaskWorker.hooks(Hooks.onBootstrap));
-
   setProtocol({
     name: "http",
     protocol: await Promise.resolve(init()),
   });
+
+  await TaskWorker.process(TaskWorker.hooks(Hooks.onBootstrap), app);
 
   return app;
 }
