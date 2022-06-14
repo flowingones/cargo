@@ -4,7 +4,7 @@ import {
   bootstrap,
   Get,
   timeToResponse,
-} from "./deps_local.ts";
+} from "./deps.ts";
 
 const app = await bootstrap({
   tasks: {
