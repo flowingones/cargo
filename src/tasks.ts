@@ -1,4 +1,6 @@
-export type Task = (...arg: unknown[]) => Promise<void> | void;
+import { App } from "./app.ts";
+
+export type Task = (app: App) => Promise<void> | void;
 
 export enum Hooks {
   onBootstrap = "onBootstrap",
@@ -23,12 +25,12 @@ function hooks(hookType: Hooks): Task[] {
   return registry[hookType];
 }
 
-async function process(tasks: Task[]) {
+async function process(tasks: Task[], app: App) {
   for (const task of tasks) {
     if (task instanceof Promise) {
-      await task();
+      await task(app);
     }
-    await Promise.resolve(task());
+    await Promise.resolve(task(app));
   }
 }
 
