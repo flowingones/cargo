@@ -32,7 +32,7 @@ async function loadAssets(
   }
 }
 
-function registerAssets(path: string) {
+function registerAssets(path: string): void {
   Get(`/${path}`, async () => {
     const file = await Deno.open(path);
     return new Response(file.readable, {
