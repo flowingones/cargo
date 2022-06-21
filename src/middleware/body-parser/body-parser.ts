@@ -1,5 +1,8 @@
-import { InternalServerException } from "https://deno.land/x/cargo@0.1.41/http/mod.ts";
-import { EntityTooLargeException, RequestContext } from "../../http/mod.ts";
+import {
+  EntityTooLargeException,
+  InternalServerException,
+  RequestContext,
+} from "../../http/mod.ts";
 import { Next } from "../middleware.ts";
 import { JSONParser } from "./json-parser.ts";
 
