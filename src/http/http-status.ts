@@ -23,6 +23,7 @@ export enum HttpStatus {
   UNAUTHORIZED = 401,
   FORBIDDEN = 403,
   NOT_FOUND = 404,
+  ENTITY_TOO_LARGE = 413,
 
   /*
    * Server Error Status
