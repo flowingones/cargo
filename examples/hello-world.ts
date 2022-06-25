@@ -1,4 +1,4 @@
-import { bootstrap, Get, timeToResponse, UrlParams } from "./deps.ts";
+import { bootstrap, Get, logTimeToResponse, UrlParams } from "./deps.ts";
 
 interface MessageParams extends UrlParams {
   message: string;
@@ -16,7 +16,7 @@ Get("/:message", ({ params }) => {
   /*
    * 3. Apply middleware functions (optional)
    */
-  .middleware(timeToResponse);
+  .middleware(logTimeToResponse);
 
 /*
  * 4. Bootstrap and Run the Application
