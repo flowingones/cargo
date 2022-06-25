@@ -1,7 +1,7 @@
 import { log } from "../utils/mod.ts";
 import { RequestContext } from "../http/mod.ts";
 
-export async function timeToResponse(
+export async function logTimeToResponse(
   ctx: RequestContext,
   next: (ctx: RequestContext) => Promise<Response>,
 ) {

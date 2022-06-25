@@ -21,7 +21,7 @@ let options: ParserOptions = {
   paser: [JSONParser],
 };
 
-export function bodyParser(parserOptions?: ParserOptions) {
+export function parseBody(parserOptions?: ParserOptions) {
   options = { ...options, ...parserOptions };
   return async (ctx: RequestContext, next: Next) => {
     if (ctx.request.body) {
