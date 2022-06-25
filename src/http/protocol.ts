@@ -2,9 +2,9 @@ import { handleException, Router } from "./mod.ts";
 import { log } from "../utils/mod.ts";
 import { serve } from "../deps.ts";
 import {
+  addRawBodyToContext,
+  addSearchParamsToContext,
   Middleware,
-  rawBody,
-  searchParams,
   walkthroughAndHandle,
 } from "../middleware/mod.ts";
 
@@ -23,9 +23,10 @@ const Protocol = {
 };
 
 export function init() {
-  middleware(rawBody);
-  middleware(searchParams);
-
+  middleware([
+    addSearchParamsToContext,
+    addRawBodyToContext,
+  ]);
   return Protocol;
 }
 
