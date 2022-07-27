@@ -1,4 +1,4 @@
-# Cargo - Deliver data fast, simple and secure!
+# Cargo - Develop Web Applications the Way You Like!
 
 Cargo is a web application framework with the right abstraction of helpful
 features to build web applications with Deno. It provides you a starting point
@@ -6,9 +6,9 @@ and structure for your projects, yet allows flexibility for different needs. You
 can focus on developing awesome projects without getting bogged down by the
 lower-level details
 
-## How to use
+## How to use Cargo
 
-Create a `main.ts` file, import and call Cargos bootstrap function and add
+Create a `app.ts` file, import and call Cargo's bootstrap function and add
 required routes to your Applications:
 
 ```ts
@@ -16,13 +16,13 @@ required routes to your Applications:
 import { bootstrap, Get } from "https://deno.land/x/cargo/mod.ts";
 import { Get } from "https://deno.land/x/cargo/http/mod.ts";
 
-const App = await bootstrap();
+const app = await bootstrap();
 
-Get("/hello", (ctx) => {
-  return new Response("World!");
+Get("/", (ctx) => {
+  return new Response("Hello World!");
 });
 
-App.run();
+app.run();
 ```
 
 Run the application with `deno run --allow-net --allow-read main.ts` and open
@@ -75,5 +75,5 @@ MIT License
 
 ## Contact
 
-Feel free submit issues or reach out to me for any suggestions at
+Feel free submit issues here on GitHub or reach out to me for any feedback at
 <daniel.steuri@flowingones.ch>

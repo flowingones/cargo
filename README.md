@@ -1,4 +1,4 @@
-# Cargo - Develop Web Applications the Way You Like It
+# Cargo - Develop Web Applications the Way You Like!
 
 Cargo focuses on best in class development experience. The right abstraction of
 helpful features and freedom for flexibility, are the core principles of Cargo.
