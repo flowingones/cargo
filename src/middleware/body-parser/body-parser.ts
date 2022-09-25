@@ -1,7 +1,7 @@
 import {
   EntityTooLargeException,
-  InternalServerException,
   RequestContext,
+  UnsupportedMediaTypeException,
 } from "../../http/mod.ts";
 import { Next } from "../middleware.ts";
 import { JSONParser } from "./json-parser.ts";
@@ -24,27 +24,27 @@ let options: ParserOptions = {
 export function parseBody(parserOptions?: ParserOptions) {
   options = { ...options, ...parserOptions };
   return async (ctx: RequestContext, next: Next) => {
-    if (ctx.request.body) {
-      const buffer = await readToMaxSize(ctx.request.body);
+    const contentType = ctx.request.headers.get("content-type")?.split(" ")[0]
+      ?.replace(";", "");
+    if (ctx.request.body && contentType) {
       const parser = options.paser?.find((parser) => {
-        return parser.mimeType === ctx.request.headers.get("content-type");
+        return parser.mimeType === contentType;
       });
       if (typeof parser?.parse !== "function") {
-        throw new InternalServerException(
+        throw new UnsupportedMediaTypeException(
           "Content type of request not supported",
         );
       }
-      ctx.body = parser.parse(buffer);
+      ctx.body = parser.parse(await readToMaxSize(ctx.request.body));
     }
     return next(ctx);
   };
 }
 
-async function readToMaxSize(
+function readToMaxSize(
   stream: ReadableStream<Uint8Array>,
 ): Promise<Uint8Array> {
-  const buffer = await readAll(stream.getReader());
-  return buffer;
+  return readAll(stream.getReader());
 }
 
 async function readAll(
