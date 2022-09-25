@@ -33,7 +33,7 @@ export function method(request: Request): HttpMethod {
 }
 
 export function getSearchParams(request: Request): SearchParams {
-  const searchParams = new URLSearchParams(new URLPattern(request.url).search);
+  const searchParams = new URLSearchParams(new URL(request.url).search);
   const searchEntries = <SearchParams> {};
 
   for (const key of searchParams.keys()) {
