@@ -68,7 +68,7 @@ async function readAll(
   return buffer;
 }
 
-function isExceeding(buffer: Uint8Array, value: Uint8Array) {
+function isExceeding(buffer: Uint8Array, value: Uint8Array): boolean {
   return (value.length > options.maxBodySize ||
     buffer.byteLength > options.maxBodySize);
 }
