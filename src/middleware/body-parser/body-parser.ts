@@ -16,13 +16,13 @@ interface ParserOptions {
   paser?: Parser<unknown>[];
 }
 
-let options: ParserOptions = {
+const defaultOptions: ParserOptions = {
   maxBodySize: 1024,
   paser: [JSONParser],
 };
 
 export function parseBody(parserOptions?: ParserOptions) {
-  options = { ...options, ...parserOptions };
+  const options = { ...defaultOptions, ...parserOptions };
   return async (ctx: RequestContext, next: Next) => {
     const contentType = ctx.request.headers.get("content-type")?.split(" ")[0]
       ?.replace(";", "");
@@ -35,7 +35,9 @@ export function parseBody(parserOptions?: ParserOptions) {
           "Content type of request not supported",
         );
       }
-      ctx.body = parser.parse(await readToMaxSize(ctx.request.body));
+      ctx.body = parser.parse(
+        await readToMaxSize(ctx.request.body, options.maxBodySize),
+      );
     }
     return next(ctx);
   };
@@ -43,12 +45,14 @@ export function parseBody(parserOptions?: ParserOptions) {
 
 function readToMaxSize(
   stream: ReadableStream<Uint8Array>,
+  maxBodySize: number,
 ): Promise<Uint8Array> {
-  return readAll(stream.getReader());
+  return readAll(stream.getReader(), maxBodySize);
 }
 
 async function readAll(
   reader: ReadableStreamDefaultReader,
+  maxBodySize: number,
 ): Promise<Uint8Array> {
   let isDone = false;
   let buffer = new Uint8Array(0);
@@ -58,9 +62,9 @@ async function readAll(
       isDone = true;
       break;
     }
-    if (isExceeding(buffer, value)) {
+    if (isExceeding(buffer, value, maxBodySize)) {
       throw new EntityTooLargeException(
-        `Max. body size of ${options.maxBodySize} bytes exceeded`,
+        `Max. body size of ${maxBodySize} bytes exceeded`,
       );
     }
     buffer = new Uint8Array([...buffer, ...value]);
@@ -68,7 +72,11 @@ async function readAll(
   return buffer;
 }
 
-function isExceeding(buffer: Uint8Array, value: Uint8Array): boolean {
-  return (value.length > options.maxBodySize ||
-    buffer.byteLength > options.maxBodySize);
+function isExceeding(
+  buffer: Uint8Array,
+  value: Uint8Array,
+  maxBodySize: number,
+): boolean {
+  return (value.length > maxBodySize ||
+    buffer.byteLength > maxBodySize);
 }
