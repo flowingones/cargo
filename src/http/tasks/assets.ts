@@ -1,7 +1,14 @@
 import { extension, log, mimeTypeByExtension } from "../../utils/mod.ts";
 import { Get } from "../mod.ts";
 
-export function autoloadAssets(
+/**
+ * @deprecated
+ * Use the function "Assets" instead
+ * Will be removed in version 1.x
+ */
+export const autoloadAssets = Assets;
+
+export function Assets(
   path: string,
   context?: string,
 ): () => Promise<void> {
