@@ -1,6 +1,13 @@
-import { log, name } from "../../utils/mod.ts";
+import { log } from "../../utils/mod.ts";
 
-export function autoloadRoutes(
+/**
+ * @deprecated
+ * Use the function "Routes" instead
+ * Will be removed in version 1.x
+ */
+export const autoloadRoutes = Routes;
+
+export function Routes(
   path: string,
   context?: string,
 ): () => Promise<void> {
@@ -29,13 +36,4 @@ async function loadRoutes(
       `No routes from the '${path}' directory loaded!`,
     );
   }
-}
-
-export async function buildRoutes() {
-  const fileContent: string[] = [];
-  for await (const file of Deno.readDir("./pages")) {
-    fileContent.push(`export * as ${name(file.name)} from "./${file.name}";\n`);
-  }
-
-  await Deno.writeTextFile("./.routes.ts", fileContent.join(""));
 }
