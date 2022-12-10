@@ -1,16 +1,16 @@
 import { NAME } from "../constants.ts";
 
-export function log(context: string, message: string) {
+export function log(context: string, message: string, customName?: string) {
   console.log(
-    `${bold(date(new Date()))} ${bold(green(NAME))} ${
+    `${bold(date(new Date()))} ${bold(green(customName || NAME))} ${
       bold(context)
     } ${message}`,
   );
 }
 
-export function info(context: string, message: string) {
+export function info(context: string, message: string, customName?: string) {
   console.info(
-    `${bold(date(new Date()))} ${bold(yellow(NAME))} ${
+    `${bold(date(new Date()))} ${bold(yellow(customName || NAME))} ${
       bold(context)
     } ${message}`,
   );
