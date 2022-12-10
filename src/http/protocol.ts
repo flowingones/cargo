@@ -5,6 +5,7 @@ import {
   addRawBodyToContext,
   addSearchParamsToContext,
   Middleware,
+  parseBody,
   walkthroughAndHandle,
 } from "../middleware/mod.ts";
 
@@ -22,10 +23,10 @@ const Protocol = {
   router: Router,
 };
 
-export function init() {
+export function init(options?: { rawBody?: boolean }) {
   middleware([
     addSearchParamsToContext,
-    addRawBodyToContext,
+    options?.rawBody ? addRawBodyToContext : parseBody(),
   ]);
   return Protocol;
 }
