@@ -1,4 +1,4 @@
-import { assertEquals } from "../../test_deps.ts";
+import { assertEquals } from "std/testing/asserts.ts";
 
 import { base, extension } from "./file.ts";
 

@@ -1,4 +1,4 @@
-import { assertEquals } from "./deps_tests.ts";
+import { assertEquals } from "std/testing/asserts.ts";
 import { UUIDSchema } from "./uuid.ts";
 
 const notUUIDMessage = '"string" is not a valid "UUID"';
