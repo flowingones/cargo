@@ -1,0 +1,25 @@
+name: ci
+run-name: change request by ${{ github.actor }}
+on: [pull_request]
+jobs: 
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - run: deno check src/mod.ts
+      - run: deno check src/auth/mod.ts
+      - run: deno check src/http/mod.ts
+      - run: deno check src/middleware/mod.ts
+      - run: deno check src/utils/mod.ts
+      - run: deno check inspect/mod.ts
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - run: deno test
