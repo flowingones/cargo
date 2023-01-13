@@ -1,5 +1,5 @@
 import { parseBody } from "./body-parser.ts";
-import { assertEquals, assertRejects } from "../../../test_deps.ts";
+import { assertEquals, assertRejects } from "std/testing/asserts.ts";
 import { EntityTooLargeException } from "../../http/mod.ts";
 
 const requestOptions = {

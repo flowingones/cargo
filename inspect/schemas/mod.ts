@@ -3,3 +3,4 @@ export * from "./bool.ts";
 export * from "./number.ts";
 export * from "./object.ts";
 export * from "./array.ts";
+export * from "./uuid.ts";
