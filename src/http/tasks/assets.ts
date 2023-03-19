@@ -1,3 +1,4 @@
+import { isProd } from "../../utils/environment.ts";
 import { extension, log, mimeTypeByExtension } from "../../utils/mod.ts";
 import { Get } from "../mod.ts";
 
@@ -44,9 +45,9 @@ function registerAssets(path: string): void {
     const file = await Deno.open(path);
     return new Response(file.readable, {
       headers: {
-        "Cache-Control": "max-age=3600",
         "content-type": mimeTypeByExtension(extension(path))?.type ||
           "text/plain",
+        ...(isProd() ? { "cache-control": "max-age=3600" } : {}),
       },
     });
   });
