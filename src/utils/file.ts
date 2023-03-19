@@ -1,4 +1,4 @@
-import { parse } from "../deps.ts";
+import { parse } from "std/path/mod.ts";
 
 export async function isDirectory(path: string): Promise<boolean> {
   try {
