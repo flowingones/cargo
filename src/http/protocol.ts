@@ -1,6 +1,6 @@
 import { handleException, Router } from "./mod.ts";
 import { log } from "../utils/mod.ts";
-import { serve } from "../deps.ts";
+import { serve } from "std/http/server.ts";
 import {
   addRawBodyToContext,
   addSearchParamsToContext,
