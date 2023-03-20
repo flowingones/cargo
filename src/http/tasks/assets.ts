@@ -45,9 +45,9 @@ function registerAssets(path: string): void {
     const file = await Deno.open(path);
     return new Response(file.readable, {
       headers: {
-        "content-type": mimeTypeByExtension(extension(path))?.type ||
+        "Content-Type": mimeTypeByExtension(extension(path))?.type ||
           "text/plain",
-        ...(isProd() ? { "cache-control": "max-age=3600" } : {}),
+        ...(isProd() ? { "Cache-Control": "max-age=3600" } : {}),
       },
     });
   });
