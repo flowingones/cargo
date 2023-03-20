@@ -17,8 +17,8 @@ export function Favicon(path: string) {
             file.readable,
             {
               headers: {
-                "content-type": "image/vnd.microsoft.icon",
-                ...(isProd() ? { "cache-control": "max-age=3600" } : {}),
+                "Content-Type": "image/vnd.microsoft.icon",
+                ...(isProd() ? { "Cache-Control": "max-age=3600" } : {}),
               },
             },
           );
