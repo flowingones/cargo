@@ -1,6 +1,6 @@
 import { handleException, Router } from "./mod.ts";
 import { log } from "../utils/mod.ts";
-import { serve } from "std/http/server.ts";
+import { type ConnInfo, serve } from "std/http/server.ts";
 import {
   addRawBodyToContext,
   addSearchParamsToContext,
@@ -39,11 +39,12 @@ function listen(port: number) {
   }
 
   serve(
-    async (request: Request) => {
+    async (request: Request, connection: ConnInfo) => {
       try {
         return await walkthroughAndHandle(
           {
             request: request,
+            connection,
           },
           chain,
           Router.resolve,

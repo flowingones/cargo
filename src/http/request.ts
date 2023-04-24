@@ -1,3 +1,4 @@
+import { type ConnInfo } from "std/http/server.ts";
 import { HttpMethod, Route } from "./mod.ts";
 
 export type Handler = (cxt: RequestContext) => Promise<Response> | Response;
@@ -11,9 +12,10 @@ export interface UrlParams {
 }
 
 export interface RequestContext {
+  request: Request;
+  connection: ConnInfo;
   params?: UrlParams;
   body?: unknown;
-  request: Request;
   auth?: unknown;
   search?: SearchParams;
 }
