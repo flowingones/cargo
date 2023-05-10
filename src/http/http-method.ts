@@ -1,5 +1,6 @@
 export enum HttpMethod {
   HEAD = "HEAD",
+  OPTIONS = "OPTIONS",
   GET = "GET",
   POST = "POST",
   PUT = "PUT",
