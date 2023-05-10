@@ -38,6 +38,14 @@ export class Route {
   }
 }
 
+export function Head(path: string, handler: Handler) {
+  return Router.add({
+    path,
+    method: HttpMethod.HEAD,
+    handler,
+  });
+}
+
 export function Get(path: string, handler: Handler): Route {
   return Router.add({
     path,
@@ -74,6 +82,14 @@ export function Delete(path: string, handler: Handler): Route {
   return Router.add({
     path,
     method: HttpMethod.DELETE,
+    handler,
+  });
+}
+
+export function Options(path: string, handler: Handler): Route {
+  return Router.add({
+    path,
+    method: HttpMethod.OPTIONS,
     handler,
   });
 }
