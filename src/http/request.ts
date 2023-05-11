@@ -49,6 +49,9 @@ export function getSearchParams(request: Request): SearchParams {
   return searchEntries;
 }
 
-export function getUrlParams(route: Route, request: Request) {
+export function getUrlParams(
+  route: Route,
+  request: Request,
+): UrlParams | undefined {
   return route.path.exec(request.url)?.pathname?.groups;
 }
