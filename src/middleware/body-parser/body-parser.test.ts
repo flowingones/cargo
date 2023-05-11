@@ -16,7 +16,7 @@ Deno.test("Body Parser:", async (t) => {
         ...requestOptions,
         body: '"a"',
       }),
-    }, (ctx) => {
+    } as any, (ctx) => {
       assertEquals("a", ctx.body);
       return Promise.resolve(new Response());
     });
@@ -32,7 +32,7 @@ Deno.test("Body Parser:", async (t) => {
               ...requestOptions,
               body: '"a"',
             }),
-          }, (_ctx) => {
+          } as any, (_ctx) => {
             return Promise.resolve(new Response());
           });
         },
@@ -48,7 +48,7 @@ Deno.test("Body Parser:", async (t) => {
         request: new Request("https://cargo.wtf", {
           ...requestOptions,
         }),
-      }, (ctx) => {
+      } as any, (ctx) => {
         assertEquals(ctx.body, undefined);
         return Promise.resolve(new Response());
       });
@@ -66,7 +66,7 @@ Deno.test("Body Parser:", async (t) => {
         ...requestOptions,
         body: jsonAsString,
       }),
-    }, (ctx) => {
+    } as any, (ctx) => {
       assertEquals(json, ctx.body);
       return Promise.resolve(new Response());
     });
@@ -81,7 +81,7 @@ Deno.test("Body Parser:", async (t) => {
         ...requestOptions,
         body: jsonAsString,
       }),
-    }, (ctx) => {
+    } as any, (ctx) => {
       assertEquals(json, ctx.body);
       return Promise.resolve(new Response());
     });
@@ -98,7 +98,7 @@ Deno.test("Body Parser:", async (t) => {
               ...requestOptions,
               body: json,
             }),
-          }, (_ctx) => {
+          } as any, (_ctx) => {
             return Promise.resolve(new Response());
           });
         },
