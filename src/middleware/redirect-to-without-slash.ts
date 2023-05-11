@@ -1,7 +1,8 @@
+import { RequestContext } from "../http/request.ts";
 import { Next } from "./middleware.ts";
 
 export async function redirectToWithoutSlash(
-  ctx: { request: Request },
+  ctx: RequestContext,
   next: Next,
 ) {
   const url = new URL(ctx.request.url);
