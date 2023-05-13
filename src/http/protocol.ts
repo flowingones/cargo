@@ -43,7 +43,7 @@ function listen(port: number) {
       try {
         return await walkthroughAndHandle(
           {
-            request: request,
+            request,
             connection,
           },
           chain,
