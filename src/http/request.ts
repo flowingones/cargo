@@ -3,13 +3,9 @@ import { HttpMethod, Route } from "./mod.ts";
 
 export type Handler = (cxt: RequestContext) => Promise<Response> | Response;
 
-export interface SearchParams {
-  [key: string]: string | string[] | undefined;
-}
+export type SearchParams = Record<string, string | string[] | undefined>;
 
-export interface UrlParams {
-  [key: string]: string;
-}
+export type UrlParams = Record<string, string | undefined>;
 
 export interface RequestContext {
   request: Request;

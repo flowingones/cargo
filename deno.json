@@ -1,6 +1,6 @@
 {
   "importMap": "./.dev/import_map.json",
   "tasks": {
-    "check": "deno check **/*.ts"
+    "check": "deno check src/mod.ts && deno check src/auth/mod.ts && deno check src/http/mod.ts && deno check src/middleware/mod.ts && deno check src/utils/mod.ts && deno check inspect/mod.ts"
   }
 }

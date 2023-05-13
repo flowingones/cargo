@@ -9,7 +9,12 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - run: deno task check
+      - run: deno check src/mod.ts
+      - run: deno check src/auth/mod.ts
+      - run: deno check src/http/mod.ts
+      - run: deno check src/middleware/mod.ts
+      - run: deno check src/utils/mod.ts
+      - run: deno check inspect/mod.ts
   test:
     runs-on: ubuntu-latest
     steps:
