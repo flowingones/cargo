@@ -1,4 +1,4 @@
-// Cargo/middleware – Version 0.1.51
+// Cargo/middleware – Version 0.1.52
 export { parseBody } from "./body-parser/body-parser.ts";
 export * from "./middleware.ts";
 export { addRawBodyToContext } from "./add-raw-body-to-context.ts";
