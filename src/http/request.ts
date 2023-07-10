@@ -1,4 +1,3 @@
-import { type ConnInfo } from "std/http/server.ts";
 import { HttpMethod, Route } from "./mod.ts";
 
 export type Handler = (cxt: RequestContext) => Promise<Response> | Response;
@@ -9,11 +8,12 @@ export type UrlParams = Record<string, string | undefined>;
 
 export interface RequestContext {
   request: Request;
-  connection: ConnInfo;
+  connection: Deno.ServeHandlerInfo;
   params?: UrlParams;
   body?: unknown;
   auth?: unknown;
   search?: SearchParams;
+  [key: string]: unknown;
 }
 
 export interface RouteParams {
