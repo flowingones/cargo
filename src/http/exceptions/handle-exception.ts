@@ -20,10 +20,6 @@ export function handleException(exception: unknown): Response {
     };
   }
   console.error(exception);
-  return new Response(JSON.stringify(body), {
-    status: body.status,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+
+  return Response.json(body);
 }

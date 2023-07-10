@@ -1,6 +1,5 @@
 import { handleException, Router } from "./mod.ts";
 import { log } from "../utils/mod.ts";
-import { type ConnInfo, serve } from "std/http/server.ts";
 import {
   addRawBodyToContext,
   addSearchParamsToContext,
@@ -38,25 +37,22 @@ function listen(port: number) {
     throw new Error("Http port not defined!");
   }
 
-  serve(
-    async (request: Request, connection: ConnInfo) => {
-      try {
-        return await walkthroughAndHandle(
-          {
-            request,
-            connection,
-          },
-          chain,
-          Router.resolve,
-        );
-      } catch (error: unknown) {
-        return handleException(error);
-      }
-    },
-    {
-      port: port,
-    },
-  );
+  Deno.serve({
+    port: port,
+  }, async (request: Request, connection: Deno.ServeHandlerInfo) => {
+    try {
+      return await walkthroughAndHandle(
+        {
+          request,
+          connection,
+        },
+        chain,
+        Router.resolve,
+      );
+    } catch (error: unknown) {
+      return handleException(error);
+    }
+  });
   log(CONTEXT, `Listening on http://localhost:${port}`);
 }
 
