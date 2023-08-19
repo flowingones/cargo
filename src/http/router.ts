@@ -36,7 +36,11 @@ function resolve(ctx: RequestContext): Promise<Response> {
   });
 
   if (!route) {
-    throw new NotFoundException();
+    throw new NotFoundException(
+      `The resource under the path "${
+        new URL(ctx.request.url).pathname
+      }" was not found`,
+    );
   }
 
   ctx.params = getUrlParams(route, ctx.request);
