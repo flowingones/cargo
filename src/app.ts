@@ -1,98 +1,75 @@
-import { init } from "./http/mod.ts";
+import { HttpProtocol, HttpProtocolOptions } from "./http/mod.ts";
 import { Middleware } from "./middleware/mod.ts";
-import { CARGO_PORT } from "./constants.ts";
+import { CARGO_DEFAULT_PORT } from "./constants.ts";
 import { Hooks, Tasks, TaskWorker } from "./tasks.ts";
+import { Protocol } from "./protocol.ts";
 
-export interface BootstrapOptions {
-  defaultProtocol: string;
-  port: number;
+export type BootstrapOptions = {
+  protocol?: Protocol;
+  defaultProtocolOptions?: HttpProtocolOptions;
+  port?: number;
   tasks?: Partial<Tasks>;
-}
-
-let defaultOptions: BootstrapOptions = {
-  defaultProtocol: "http",
-  port: CARGO_PORT,
 };
 
-export interface App {
-  run(port?: number): void;
-  setProtocol(protocol: RegisteredProtocol): App;
-  getProtocol(name: string): Protocol | undefined;
-  middleware(middleware: Middleware | Middleware[]): App;
+export async function bootstrap(
+  options?: Partial<BootstrapOptions>,
+): Promise<App> {
+  const taskWorker = new TaskWorker();
+  const appOptions: AppOptions = {
+    protocol: options?.protocol ||
+      new HttpProtocol(options?.defaultProtocolOptions),
+    port: options?.port || CARGO_DEFAULT_PORT,
+    taskWorker,
+    tasks: options?.tasks,
+  };
+
+  const app = new App(appOptions);
+
+  await taskWorker.process(taskWorker.hooks(Hooks.onBootstrap), app);
+
+  return app;
 }
 
-interface Protocol {
-  middleware(middleware: Middleware | Middleware[]): Protocol;
-  listen(port?: number): void;
-}
-
-interface RegisteredProtocol {
-  name: string;
+interface AppOptions {
+  taskWorker?: TaskWorker;
+  tasks?: Partial<Tasks>;
+  port: number;
   protocol: Protocol;
 }
 
-const app: App = {
-  run,
-  setProtocol,
-  getProtocol,
-  middleware,
-};
+export class App {
+  #options: Omit<AppOptions, "taskWorker" | "tasks">;
+  #tasksWorker?: TaskWorker;
 
-const protocols: RegisteredProtocol[] = [];
-
-export async function bootstrap(
-  options: Partial<BootstrapOptions> = {},
-): Promise<App> {
-  defaultOptions = { ...defaultOptions, ...options };
-
-  if (defaultOptions.tasks) {
-    registerTasks(defaultOptions.tasks);
-  }
-
-  setProtocol({
-    name: "http",
-    protocol: await Promise.resolve(init()),
-  });
-
-  await TaskWorker.process(TaskWorker.hooks(Hooks.onBootstrap), app);
-
-  return app;
-}
-
-function run(port: number = defaultOptions.port): void {
-  for (const protocol of protocols) {
-    if (protocol.name === defaultOptions.defaultProtocol) {
-      protocol.protocol.listen(port);
-    } else {
-      protocol.protocol.listen();
+  constructor(options: AppOptions) {
+    const { taskWorker, tasks, ...rest } = options;
+    this.#options = rest;
+    if (tasks && taskWorker) {
+      this.#tasksWorker = taskWorker;
+      this.#registerTasks(tasks);
     }
   }
-}
 
-function middleware(
-  middleware: Middleware | Middleware[],
-): App {
-  protocols.find((protocol) => {
-    return protocol.name === defaultOptions.defaultProtocol;
-  })?.protocol?.middleware(middleware);
-  return app;
-}
+  run(port: number = this.#options.port): void {
+    this.#options.protocol.listen(port);
+  }
 
-function setProtocol(protocol: RegisteredProtocol): App {
-  protocols.push(protocol);
-  return app;
-}
+  middleware(
+    middleware: Middleware | Middleware[],
+  ): App {
+    this.#options.protocol.middleware(middleware);
+    return this;
+  }
 
-function getProtocol(name: string): Protocol | undefined {
-  return protocols.find((protocol) => {
-    return protocol.name === name;
-  })?.protocol;
-}
+  getProtocol(): Protocol {
+    return this.#options.protocol;
+  }
 
-function registerTasks(tasks: Partial<Tasks>) {
-  if (Array.isArray(tasks.onBootstrap)) {
-    tasks.onBootstrap.forEach((task) => {
-      TaskWorker.add({ type: Hooks.onBootstrap, task });
-    });
+  #registerTasks(tasks: Partial<Tasks>) {
+    if (Array.isArray(tasks.onBootstrap)) {
+      tasks.onBootstrap.forEach((task) => {
+        this.#tasksWorker?.add({ type: Hooks.onBootstrap, task });
+      });
+    }
   }
 }

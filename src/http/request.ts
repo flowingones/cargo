@@ -1,4 +1,5 @@
 import { HttpMethod, Route } from "./mod.ts";
+import { type ProtocolConnectionInfo } from "../mod.ts";
 
 export type Handler = (cxt: RequestContext) => Promise<Response> | Response;
 
@@ -8,7 +9,7 @@ export type UrlParams = Record<string, string | undefined>;
 
 export interface RequestContext {
   request: Request;
-  connection: Deno.ServeHandlerInfo;
+  connection: ProtocolConnectionInfo;
   params?: UrlParams;
   body?: unknown;
   auth?: unknown;
