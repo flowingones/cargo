@@ -21,4 +21,4 @@ Get("/:message", ({ params }) => {
 /*
  * 4. Bootstrap and Run the Application
  */
-(await bootstrap()).run();
+(await bootstrap({ defaultProtocolOptions: { legacyServe: false } })).run();

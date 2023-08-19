@@ -11,17 +11,17 @@ export interface Parser<T> {
   parse: (buffer: Uint8Array) => T;
 }
 
-interface ParserOptions {
+export interface BodyParserOptions {
   maxBodySize: number;
   paser?: Parser<unknown>[];
 }
 
-const defaultOptions: ParserOptions = {
+const defaultOptions: BodyParserOptions = {
   maxBodySize: 1024,
   paser: [JSONParser],
 };
 
-export function parseBody(parserOptions?: ParserOptions) {
+export function bodyParser(parserOptions?: Partial<BodyParserOptions>) {
   const options = { ...defaultOptions, ...parserOptions };
   return async (ctx: RequestContext, next: Next) => {
     const contentType = ctx.request.headers.get("content-type")?.split(" ")[0]

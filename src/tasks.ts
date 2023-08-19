@@ -13,29 +13,23 @@ export interface ToRegister {
 
 export type Tasks = Record<Hooks, Task[]>;
 
-const registry: Tasks = {
-  onBootstrap: [],
-};
+export class TaskWorker {
+  #registry: Tasks = { onBootstrap: [] };
 
-function add(task: ToRegister) {
-  registry[task.type].push(task.task);
-}
+  add(task: ToRegister) {
+    this.#registry[task.type].push(task.task);
+  }
 
-function hooks(hookType: Hooks): Task[] {
-  return registry[hookType];
-}
+  hooks(hookType: Hooks): Task[] {
+    return this.#registry[hookType];
+  }
 
-async function process(tasks: Task[], app: App) {
-  for (const task of tasks) {
-    if (task instanceof Promise) {
-      await task(app);
+  async process(tasks: Task[], app: App) {
+    for (const task of tasks) {
+      if (task instanceof Promise) {
+        await task(app);
+      }
+      await Promise.resolve(task(app));
     }
-    await Promise.resolve(task(app));
   }
 }
-
-export const TaskWorker = {
-  add,
-  hooks,
-  process,
-};

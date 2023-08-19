@@ -1,4 +1,4 @@
-import { parseBody } from "./body-parser.ts";
+import { bodyParser } from "./body-parser.ts";
 import { assertEquals, assertRejects } from "std/testing/asserts.ts";
 import { EntityTooLargeException } from "../../http/mod.ts";
 
@@ -11,7 +11,7 @@ const requestOptions = {
 
 Deno.test("Body Parser:", async (t) => {
   await t.step("parse if body size not exceeds the max size", async () => {
-    await parseBody({ maxBodySize: 3 })({
+    await bodyParser({ maxBodySize: 3 })({
       request: new Request("https://cargo.wtf", {
         ...requestOptions,
         body: '"a"',
@@ -27,7 +27,7 @@ Deno.test("Body Parser:", async (t) => {
     () => {
       assertRejects(
         () => {
-          return parseBody({ maxBodySize: 2 })({
+          return bodyParser({ maxBodySize: 2 })({
             request: new Request("https://cargo.wtf", {
               ...requestOptions,
               body: '"a"',
@@ -44,7 +44,7 @@ Deno.test("Body Parser:", async (t) => {
   await t.step(
     "handle undefined body",
     () => {
-      parseBody()({
+      bodyParser()({
         request: new Request("https://cargo.wtf", {
           ...requestOptions,
         }),
@@ -61,7 +61,7 @@ Deno.test("Body Parser:", async (t) => {
     };
     const jsonAsString = JSON.stringify(json);
 
-    await parseBody()({
+    await bodyParser()({
       request: new Request("https://cargo.wtf", {
         ...requestOptions,
         body: jsonAsString,
@@ -76,7 +76,7 @@ Deno.test("Body Parser:", async (t) => {
     const json = "";
     const jsonAsString = JSON.stringify(json);
 
-    await parseBody()({
+    await bodyParser()({
       request: new Request("https://cargo.wtf", {
         ...requestOptions,
         body: jsonAsString,
@@ -93,7 +93,7 @@ Deno.test("Body Parser:", async (t) => {
       const json = "peng";
       assertRejects(
         () => {
-          return parseBody()({
+          return bodyParser()({
             request: new Request("https://cargo.wtf", {
               ...requestOptions,
               body: json,

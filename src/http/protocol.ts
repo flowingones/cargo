@@ -1,45 +1,75 @@
 import { handleException, Router } from "./mod.ts";
-import { log } from "../utils/mod.ts";
+import { serve } from "std/http/server.ts";
+
+import { info, log } from "../utils/mod.ts";
 import {
   addRawBodyToContext,
   addSearchParamsToContext,
+  bodyParser,
   Middleware,
-  parseBody,
   walkthroughAndHandle,
 } from "../middleware/mod.ts";
+import { BodyParserOptions } from "../middleware/body-parser/body-parser.ts";
 
-const CONTEXT = "PROTOCOL (HTTP)";
+import { type Protocol, type ProtocolConnectionInfo } from "../mod.ts";
+
+const LOG_CONTEXT = "PROTOCOL (HTTP)";
 const chain: Middleware[] = [];
 
-export interface InitOptions {
-  [key: string]: unknown;
+export interface HttpProtocolOptions {
+  rawBody?: boolean;
+  legacyServe?: boolean;
+  bodyParserOptions?: BodyParserOptions;
   port?: number;
 }
 
-const Protocol = {
-  listen,
-  middleware,
-  router: Router,
-};
-
-export function init(options?: { rawBody?: boolean }) {
-  middleware([
-    addSearchParamsToContext,
-    options?.rawBody ? addRawBodyToContext : parseBody(),
-  ]);
-  return Protocol;
-}
-
-function listen(port: number) {
-  logRegisteredRoutes();
-
-  if (!port) {
-    throw new Error("Http port not defined!");
+export class HttpProtocol implements Protocol {
+  #options?: HttpProtocolOptions;
+  constructor(options?: HttpProtocolOptions) {
+    this.#options = options;
+    this.middleware([
+      addSearchParamsToContext,
+      options?.rawBody ? addRawBodyToContext : bodyParser(
+        options?.bodyParserOptions && { ...options.bodyParserOptions },
+      ),
+    ]);
   }
 
-  Deno.serve({
-    port: port,
-  }, async (request: Request, connection: Deno.ServeHandlerInfo) => {
+  listen(port: number) {
+    logRegisteredRoutes();
+
+    if (!port) {
+      throw new Error("Http port not defined!");
+    }
+    if (this.#options?.legacyServe) {
+      info(LOG_CONTEXT, "Legacy server started");
+
+      serve(this.#handle, {
+        port: port,
+      });
+    } else {
+      Deno.serve({
+        port: port,
+      }, this.#handle);
+    }
+    log(LOG_CONTEXT, `Listening on http://localhost:${port}`);
+  }
+
+  middleware(middleware: Middleware | Middleware[]): HttpProtocol {
+    if (Array.isArray(middleware)) {
+      for (const eachMiddleware of middleware) {
+        chain.push(eachMiddleware);
+      }
+    } else {
+      chain.push(middleware);
+    }
+    return this;
+  }
+
+  async #handle(
+    request: Request,
+    connection: ProtocolConnectionInfo,
+  ): Promise<Response> {
     try {
       return await walkthroughAndHandle(
         {
@@ -52,19 +82,7 @@ function listen(port: number) {
     } catch (error: unknown) {
       return handleException(error);
     }
-  });
-  log(CONTEXT, `Listening on http://localhost:${port}`);
-}
-
-function middleware(middleware: Middleware | Middleware[]) {
-  if (Array.isArray(middleware)) {
-    for (const eachMiddleware of middleware) {
-      chain.push(eachMiddleware);
-    }
-  } else {
-    chain.push(middleware);
   }
-  return Protocol;
 }
 
 function logRegisteredRoutes() {
