@@ -16,3 +16,17 @@ export function validateBody(schema: BaseSchema) {
     return next(ctx);
   };
 }
+
+export function validateSearch(schema: BaseSchema) {
+  return (ctx: RequestContext, next: Next) => {
+    const errors = schema.validate(ctx.search, "Search Parameters").errors;
+    if (errors.length) {
+      const exception = new BadRequestException();
+      exception.error = errors.map((error) => {
+        return `${error.message}`;
+      });
+      throw exception;
+    }
+    return next(ctx);
+  };
+}

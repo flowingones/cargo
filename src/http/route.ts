@@ -3,9 +3,11 @@ import { Router } from "./router.ts";
 import { Handler, HttpMethod, RouteParams } from "./mod.ts";
 
 import { Middleware, validateBody } from "../middleware/mod.ts";
+import { validateSearch } from "../middleware/validate.ts";
 
 interface ValidationOptions {
   body?: BaseSchema;
+  search?: BaseSchema;
 }
 
 export class Route {
@@ -33,6 +35,9 @@ export class Route {
   validate(options: ValidationOptions): Route {
     if (options.body) {
       this.middleware(validateBody(options.body));
+    }
+    if (options.search) {
+      this.middleware(validateSearch(options.search));
     }
     return this;
   }
