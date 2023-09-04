@@ -20,7 +20,6 @@ export interface HttpProtocolOptions {
   rawBody?: boolean;
   legacyServe?: boolean;
   bodyParserOptions?: BodyParserOptions;
-  port?: number;
 }
 
 export class HttpProtocol implements Protocol {
