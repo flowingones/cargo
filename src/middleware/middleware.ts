@@ -2,7 +2,10 @@ import { Handler, RequestContext } from "../http/mod.ts";
 
 export type Next = (ctx: RequestContext) => Promise<Response>;
 
-export type Middleware = (cxt: RequestContext, next: Next) => Promise<Response>;
+export type Middleware = (
+  cxt: RequestContext,
+  next: Next,
+) => Promise<Response> | Response;
 
 export function walkthroughAndHandle(
   ctx: RequestContext,
@@ -15,7 +18,8 @@ export function walkthroughAndHandle(
     const middleware = chain[i];
     if (typeof middleware === "function") {
       i++;
-      return middleware(ctx, next);
+      const result = middleware(ctx, next);
+      return result instanceof Promise ? result : Promise.resolve(result);
     }
     if (handler instanceof Promise) {
       return handler(ctx) as Promise<Response>;
