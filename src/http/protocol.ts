@@ -55,13 +55,7 @@ export class HttpProtocol implements Protocol {
   }
 
   middleware(middleware: Middleware | Middleware[]): HttpProtocol {
-    if (Array.isArray(middleware)) {
-      for (const eachMiddleware of middleware) {
-        chain.push(eachMiddleware);
-      }
-    } else {
-      chain.push(middleware);
-    }
+    chain.push(...Array.isArray(middleware) ? middleware : [middleware]);
     return this;
   }
 
