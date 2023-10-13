@@ -1,6 +1,6 @@
 import { PrimitiveSchema, ValidationError, Validator } from "../mod.ts";
 
-export class StringSchema extends PrimitiveSchema {
+export class StringSchema extends PrimitiveSchema<string> {
   constructor() {
     super("string");
     this.validator(isString);

@@ -20,6 +20,10 @@ Deno.test("Object Schema Validation: 'isObject'", () => {
     .optional()
     .required();
 
+  const a: typeof isObject.type = {
+    name: "hello",
+  };
+
   assertArrayIncludes(isObject.validate(undefined).errors, [requiredMessage]);
   assertArrayIncludes(isObject.validate(null).errors, [requiredMessage]);
 

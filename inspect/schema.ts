@@ -3,8 +3,8 @@ export type Validator = (
   key?: string,
 ) => ValidationError | undefined;
 
-export interface Validation {
-  value: unknown;
+export interface Validation<T> {
+  value: T;
   errors: ValidationError[];
 }
 
@@ -17,28 +17,34 @@ export interface Property {
   isRequired: boolean;
 }
 
-export abstract class BaseSchema {
+type OptionalType<T extends BaseSchema<unknown>> =
+  & Omit<T, "type">
+  & Partial<Pick<T, "type">>;
+
+export abstract class BaseSchema<T> {
   property: Property = {
     validators: [],
     isRequired: true,
   };
+
+  type!: T;
 
   protected validator(validator: Validator): this {
     this.property.validators.push(validator);
     return this;
   }
 
-  optional(): this {
+  optional(): OptionalType<this> {
     this.property.isRequired = false;
     return this;
   }
 
   abstract required(): this;
 
-  abstract validate(value: unknown, key?: string): Validation;
+  abstract validate(value: unknown, key?: string): Validation<T>;
 }
 
-export abstract class PrimitiveSchema extends BaseSchema {
+export abstract class PrimitiveSchema<T> extends BaseSchema<T> {
   constructor(type: string) {
     super();
     this.property.validators = [required(type)];
@@ -54,7 +60,7 @@ export abstract class PrimitiveSchema extends BaseSchema {
     return this;
   }
 
-  validate(value: unknown, key?: string): Validation {
+  validate(value: unknown, key?: string): Validation<T> {
     const errors: ValidationError[] = [];
 
     if (this.property.isRequired || isDefined(value)) {
@@ -65,7 +71,7 @@ export abstract class PrimitiveSchema extends BaseSchema {
     }
 
     return {
-      value,
+      value: <T> value,
       errors,
     };
   }

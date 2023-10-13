@@ -1,6 +1,6 @@
 import { PrimitiveSchema, ValidationError, Validator } from "../mod.ts";
 
-export class NumberSchema extends PrimitiveSchema {
+export class NumberSchema extends PrimitiveSchema<number> {
   constructor() {
     super("number");
     this.property.validators.push(isNumber);

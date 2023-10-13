@@ -6,13 +6,13 @@ import {
   ValidationError,
 } from "../mod.ts";
 
-export class ArraySchema extends BaseSchema {
-  constructor(private schema: BaseSchema) {
+export class ArraySchema extends BaseSchema<unknown> {
+  constructor(private schema: BaseSchema<unknown>) {
     super();
     this.validator(required("array")).validator(isArray);
   }
 
-  validate(toValidate: unknown, key?: string): Validation {
+  validate(toValidate: unknown, key?: string): Validation<unknown> {
     const errors: ValidationError[] = [];
 
     if (this.property.isRequired || isDefined(toValidate)) {

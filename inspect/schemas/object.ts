@@ -1,26 +1,25 @@
-import {
-  BaseSchema,
-  isDefined,
-  required,
-  Validation,
-  ValidationError,
-} from "../mod.ts";
+import { BaseSchema, isDefined, required, ValidationError } from "../mod.ts";
 
 interface Keyable {
   [key: string]: unknown;
 }
 
 interface KeyableSchema {
-  [key: string]: BaseSchema;
+  [key: string]: BaseSchema<unknown>;
 }
 
-export class ObjectSchema extends BaseSchema {
-  constructor(private schema: KeyableSchema) {
+type SchemaType<T extends KeyableSchema> = {
+  [P in keyof T]: T[P]["type"];
+};
+
+export class ObjectSchema<T extends KeyableSchema>
+  extends BaseSchema<SchemaType<T>> {
+  constructor(private schema: T) {
     super();
     this.validator(required("object")).validator(isObject);
   }
 
-  validate(toValidate: unknown, key?: string): Validation {
+  validate(toValidate: unknown, key?: string) {
     const errors: ValidationError[] = [];
 
     if (this.property.isRequired || isDefined(toValidate)) {
@@ -37,7 +36,7 @@ export class ObjectSchema extends BaseSchema {
     }
 
     return {
-      value: toValidate,
+      value: <SchemaType<T>> toValidate,
       errors,
     };
   }
