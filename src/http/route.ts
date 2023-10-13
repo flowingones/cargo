@@ -6,8 +6,8 @@ import { Middleware, validateBody } from "../middleware/mod.ts";
 import { validateSearch } from "../middleware/validate.ts";
 
 interface ValidationOptions {
-  body?: BaseSchema;
-  search?: BaseSchema;
+  body?: BaseSchema<unknown>;
+  search?: BaseSchema<unknown>;
 }
 
 export class Route {

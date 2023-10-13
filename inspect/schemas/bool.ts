@@ -1,6 +1,6 @@
 import { PrimitiveSchema, ValidationError } from "../mod.ts";
 
-export class BooleanSchema extends PrimitiveSchema {
+export class BooleanSchema extends PrimitiveSchema<boolean> {
   constructor() {
     super("boolean");
     this.validator(isBoolean);
