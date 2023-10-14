@@ -8,15 +8,23 @@ export interface Instructions<T> {
 
 export interface Strategy<T> {
   name: string;
-  authenticate: (ctx: RequestContext, instructions: Instructions<T>) => void;
+  authenticate: (
+    ctx: RequestContext,
+    instructions: Instructions<T>,
+  ) => Promise<void> | void;
 }
 
 function authentication<T>(
-  strategy: Strategy<T>,
+  { authenticate }: Strategy<T>,
   ctx: RequestContext,
 ): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    strategy.authenticate(ctx, { allow: resolve, deny: reject });
+    const attempt = authenticate(ctx, { allow: resolve, deny: reject });
+    if (attempt instanceof Promise) {
+      attempt.catch((e: Error) => {
+        reject(e.message);
+      });
+    }
   });
 }
 
