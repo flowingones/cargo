@@ -1,5 +1,5 @@
 import { assertArrayIncludes, assertEquals } from "std/testing/asserts.ts";
-import { NumberSchema } from "../mod.ts";
+import { NumberSchema } from "../schemas/number.ts";
 
 const requiredMessage = {
   message: '"number" is required',

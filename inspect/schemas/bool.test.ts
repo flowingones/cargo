@@ -1,5 +1,5 @@
 import { assertArrayIncludes, assertEquals } from "std/testing/asserts.ts";
-import { BooleanSchema } from "../mod.ts";
+import { BooleanSchema } from "../schemas/bool.ts";
 
 const requiredMessage = {
   message: '"boolean" is required',

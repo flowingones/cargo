@@ -1,6 +1,6 @@
 import { BadRequestException, type RequestContext } from "../http/mod.ts";
 import type { Next } from "./middleware.ts";
-import type { BaseSchema, ValidationError } from "inspect/mod.ts";
+import type { BaseSchema, ValidationError } from "inspect/schema.ts";
 
 export function validateBody(schema: BaseSchema<unknown>) {
   return (ctx: RequestContext, next: Next) => {

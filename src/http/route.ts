@@ -1,4 +1,4 @@
-import { BaseSchema } from "inspect/mod.ts";
+import { BaseSchema } from "inspect/schema.ts";
 import { Router } from "./router.ts";
 import { Handler, HttpMethod, RouteParams } from "./mod.ts";
 

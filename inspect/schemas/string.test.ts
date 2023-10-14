@@ -1,5 +1,5 @@
 import { assertArrayIncludes, assertEquals } from "std/testing/asserts.ts";
-import { StringSchema } from "../mod.ts";
+import { StringSchema } from "./string.ts";
 
 const requiredMessage = {
   message: '"string" is required',
