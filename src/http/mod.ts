@@ -1,4 +1,4 @@
-// Cargo/http – Version 0.1.59
+// Cargo/http – Version 0.1.60
 export * from "./exceptions/mod.ts";
 export * from "./http-method.ts";
 export * from "./http-status.ts";
