@@ -21,7 +21,5 @@ export function handleException(exception: unknown): Response {
   }
   console.error(exception);
 
-  return Response.json(body);
+  return Response.json(body, { status: body.status });
 }
-
-
