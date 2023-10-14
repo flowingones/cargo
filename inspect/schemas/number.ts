@@ -1,4 +1,4 @@
-import { PrimitiveSchema, ValidationError, Validator } from "../mod.ts";
+import { PrimitiveSchema, ValidationError, Validator } from "../schema.ts";
 
 export class NumberSchema extends PrimitiveSchema<number> {
   constructor() {

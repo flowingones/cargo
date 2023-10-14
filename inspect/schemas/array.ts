@@ -2,17 +2,19 @@ import {
   BaseSchema,
   isDefined,
   required,
+  Schema,
   Validation,
   ValidationError,
-} from "../mod.ts";
+} from "../schema.ts";
 
-export class ArraySchema extends BaseSchema<unknown> {
-  constructor(private schema: BaseSchema<unknown>) {
+export class ArraySchema<T extends Schema<unknown>>
+  extends BaseSchema<T["type"][]> {
+  constructor(private schema: T) {
     super();
     this.validator(required("array")).validator(isArray);
   }
 
-  validate(toValidate: unknown, key?: string): Validation<unknown> {
+  validate(toValidate: unknown, key?: string): Validation<T["type"][]> {
     const errors: ValidationError[] = [];
 
     if (this.property.isRequired || isDefined(toValidate)) {
@@ -37,7 +39,7 @@ export class ArraySchema extends BaseSchema<unknown> {
     }
 
     return {
-      value: toValidate,
+      value: <T["type"][]> toValidate,
       errors,
     };
   }

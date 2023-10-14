@@ -1,4 +1,4 @@
-import { PrimitiveSchema, ValidationError } from "../mod.ts";
+import { PrimitiveSchema, ValidationError } from "../schema.ts";
 
 export type Version = "1" | "4" | "all";
 

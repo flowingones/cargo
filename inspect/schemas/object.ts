@@ -1,11 +1,17 @@
-import { BaseSchema, isDefined, required, ValidationError } from "../mod.ts";
+import {
+  BaseSchema,
+  isDefined,
+  required,
+  Schema,
+  ValidationError,
+} from "../schema.ts";
 
 interface Keyable {
   [key: string]: unknown;
 }
 
 interface KeyableSchema {
-  [key: string]: BaseSchema<unknown>;
+  [key: string]: Schema<unknown>;
 }
 
 type SchemaType<T extends KeyableSchema> = {

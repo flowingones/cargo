@@ -17,11 +17,16 @@ export interface Property {
   isRequired: boolean;
 }
 
-type OptionalType<T extends BaseSchema<unknown>> =
+type OptionalType<T extends Schema<unknown>> =
   & Omit<T, "type">
   & Partial<Pick<T, "type">>;
 
-export abstract class BaseSchema<T> {
+export interface Schema<T> {
+  validate(value: unknown, key?: string): Validation<T>;
+  type?: T;
+}
+
+export abstract class BaseSchema<T> implements Schema<T> {
   property: Property = {
     validators: [],
     isRequired: true,
