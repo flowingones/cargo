@@ -35,6 +35,11 @@ export class StringSchema extends PrimitiveSchema<string> {
     this.validator(endsWith(needle));
     return this;
   }
+
+  regex(regex: RegExp): this {
+    this.validator(isRegex(regex));
+    return this;
+  }
 }
 
 function isString(value: unknown, key?: string): ValidationError | undefined {
@@ -106,6 +111,16 @@ function endsWith(needle: string): Validator {
     }
     return {
       message: `"${key || "string"}" does not end with "${needle}"`,
+    };
+  };
+}
+function isRegex(regex: RegExp): Validator {
+  return (value: unknown, key?: string) => {
+    if (typeof value === "string" && regex.test(<string> value)) {
+      return;
+    }
+    return {
+      message: `"${key ?? "string"}" does not match regex "${regex}"`,
     };
   };
 }

@@ -32,6 +32,10 @@ const endsWithMessage = {
   message: `"string" does not end with "go"`,
 };
 
+const regexMessage = {
+  message: '"string" does not match regex "/^[a-z]+$/g"',
+};
+
 Deno.test("String Schema Validation: 'isString'", () => {
   const isString = new StringSchema();
 
@@ -273,4 +277,29 @@ Deno.test("String Schema Validation: 'endsWith'", () => {
   assertArrayIncludes(startsWith.validate({}).errors, [endsWithMessage]);
   assertArrayIncludes(startsWith.validate([]).errors, [endsWithMessage]);
   assertArrayIncludes(startsWith.validate(() => {}).errors, [endsWithMessage]);
+});
+
+Deno.test("String Schema Validation: 'regex'", () => {
+  const regex = new StringSchema().regex(/^[a-z]+$/g);
+
+  assertArrayIncludes(regex.validate(undefined).errors, [regexMessage]);
+  assertArrayIncludes(regex.validate(null).errors, [regexMessage]);
+
+  assertArrayIncludes(regex.validate("").errors, [regexMessage]);
+  assertEquals(regex.validate("cargo").errors, []);
+
+  assertArrayIncludes(regex.validate(-1).errors, [regexMessage]);
+  assertArrayIncludes(regex.validate(0).errors, [regexMessage]);
+  assertArrayIncludes(regex.validate(1).errors, [regexMessage]);
+
+  assertArrayIncludes(regex.validate(NaN).errors, [regexMessage]);
+  assertArrayIncludes(regex.validate(Infinity).errors, [regexMessage]);
+  assertArrayIncludes(regex.validate(-Infinity).errors, [regexMessage]);
+
+  assertArrayIncludes(regex.validate(true).errors, [regexMessage]);
+  assertArrayIncludes(regex.validate(false).errors, [regexMessage]);
+
+  assertArrayIncludes(regex.validate({}).errors, [regexMessage]);
+  assertArrayIncludes(regex.validate([]).errors, [regexMessage]);
+  assertArrayIncludes(regex.validate(() => {}).errors, [regexMessage]);
 });
