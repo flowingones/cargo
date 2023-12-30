@@ -32,6 +32,7 @@ export class Route {
     }
     return this;
   }
+
   validate(options: ValidationOptions): Route {
     if (options.body) {
       this.middleware(validateBody(options.body));

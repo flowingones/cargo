@@ -16,8 +16,8 @@ export type Tasks = Record<Hooks, Task[]>;
 export class TaskWorker {
   #registry: Tasks = { onBootstrap: [] };
 
-  add(task: ToRegister) {
-    this.#registry[task.type].push(task.task);
+  add({ type, task }: ToRegister) {
+    this.#registry[type].push(task);
   }
 
   hooks(hookType: Hooks): Task[] {
